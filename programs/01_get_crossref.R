@@ -15,10 +15,19 @@ library(rcrossref)
 
 # Each journal has a ISSN
 if (!file.exists(issns.file)) {
-  issns <- data.frame(matrix(ncol=3,nrow=1))
+  issns <- data.frame(matrix(ncol=3,nrow=9))
   names(issns) <- c("journal","issn","lastdate")
   tmp.date <- c("2000-01")
-  issns[1,] <- c("American Economic Journal: Applied Economics","1945-7790",tmp.date)
+issns[1,] <- c("American Economic Journal: Applied Economics","1945-7790",tmp.date)
+issns[2,] <- c("American Economic Journal: Economic Policy","1945-774X",tmp.date)
+issns[3,] <- c("American Economic Journal: Macroeconomics", "1945-7715",tmp.date)
+issns[4,] <- c("American Economic Journal: Microeconomics", "1945-7685",tmp.date)
+issns[5,] <- c("The American Economic Review","1944-7981",tmp.date)
+issns[6,] <- c("The American Economic Review","0002-8282",tmp.date)  # print ISSN is needed!
+issns[7,] <- c("Journal of Economic Literature","2328-8175",tmp.date)
+issns[8,] <- c("Journal of Economic Perspectives","1944-7965",tmp.date)
+issns[9,] <- c("American Economic Review: Insights","2640-2068",tmp.date)
+
   saveRDS(issns, file= issns.file)
 }
 
@@ -26,7 +35,8 @@ issns <- readRDS(file = issns.file)
 
 if (!file.exists(doi.file.Rds) ) {
   new.df <- NA
-  for ( x in 1 ) {
+  for ( x in 1:nrow(issns) ) {
+    message(paste0("Processing ",issns[x,"journal"]," (",issns[x,"issn"],")"))
     new <- cr_journals(issn=issns[x,"issn"], works=TRUE,
                        filter=c(from_pub_date=issns[x,"lastdate"]),
                        select=c("DOI","title","published-print","volume","issue","container-title","author"),
@@ -37,23 +47,34 @@ if (!file.exists(doi.file.Rds) ) {
       new.df$issn = issns[x,"issn"]
     } else {
       tmp.df <- as.data.frame(new$data)
-      tmp.df$issn = issns[x,"issn"]
-      new.df <- bind_rows(new.df,tmp.df)
+      if ( nrow(tmp.df) > 0 ) {
+        tmp.df$issn = issns[x,"issn"]
+        new.df <- bind_rows(new.df,tmp.df)
+      } else {
+        warning(paste0("Did not find records for ISSN=",issns[x,"issn"]))
+      }
       rm(tmp.df)
     }
   }
   # filters
-  new.df %>%
-    filter(title!="Front Matter") %>%
-    filter(!str_detect(title,"Volume")) %>%
-    filter(!str_detect(title,"Forthcoming")) %>%
-    # filter(title!="Editor's Note") %>%
-    # More robust
-    filter(str_sub(doi, start= -1)!="i")-> filtered.df
-  saveRDS(filtered.df, file=  doi.file.Rds)
+  saveRDS(new.df, file=  file.path(interwrk,"new.Rds"))
   rm(new)
 }
 
+
+# filters
+new.df <- file.path(interwrk,"new.Rds")
+nrow(new.df)
+new.df %>%
+  filter(is.null(author)) %>%
+  filter(title!="Front Matter") %>%
+  filter(!str_detect(title,"Volume")) %>%
+  filter(!str_detect(title,"Forthcoming")) %>%
+  # filter(title!="Editor's Note") %>%
+  # More robust
+  filter(str_sub(doi, start= -1)!="i")-> filtered.df
+nrow(filtered.df)
+saveRDS(filtered.df, file=  doi.file.Rds)
 
 # clean read-back
 aejdois <- readRDS(file= doi.file.Rds)
