@@ -28,12 +28,16 @@ issns[7,] <- c("Journal of Economic Literature","2328-8175",tmp.date)
 issns[8,] <- c("Journal of Economic Perspectives","1944-7965",tmp.date)
 issns[9,] <- c("American Economic Review: Insights","2640-2068",tmp.date)
 
-  saveRDS(issns, file= issns.file)
+  saveRDS(issns %>% filter(!is.na(journal)), file= issns.file)
+} else {
+  warning(paste("Reusing file: ",issns.file))
 }
 
 issns <- readRDS(file = issns.file)
 
-if (!file.exists(doi.file.Rds) ) {
+if (file.exists(doi.file.Rds) ) {
+  warning(paste("Re-using file:",doi.file.Rds))
+} else{
   new.df <- NA
   for ( x in 1:nrow(issns) ) {
     message(paste0("Processing ",issns[x,"journal"]," (",issns[x,"issn"],")"))
@@ -63,10 +67,10 @@ if (!file.exists(doi.file.Rds) ) {
 
 
 # filters
-new.df <- file.path(interwrk,"new.Rds")
+new.df <- readRDS(file.path(interwrk,"new.Rds"))
 nrow(new.df)
 new.df %>%
-  filter(is.null(author)) %>%
+  filter(!is.null(author)) %>%
   filter(title!="Front Matter") %>%
   filter(!str_detect(title,"Volume")) %>%
   filter(!str_detect(title,"Forthcoming")) %>%
@@ -77,78 +81,22 @@ nrow(filtered.df)
 saveRDS(filtered.df, file=  doi.file.Rds)
 
 # clean read-back
-aejdois <- readRDS(file= doi.file.Rds)
-nrow(aejdois)
+aeadois <- readRDS(file= doi.file.Rds)
+nrow(aeadois)
 
-# subset to the years in-scope: 2009-2018.
-aejdois %>%
+# subset to the years in-scope: 2019+
+aeadois %>%
   mutate(year=substr(published.print,1,4)) %>%
-  filter(year < 2019 ) %>%
-  filter(published.print < '2018-07-01') %>%
+  filter(year >= 2019 ) %>%
+  filter(published.print >= '2019-01-01') -> aeadois.subset 
+aeadois.subset %>%
   group_by(year) %>%
-  summarise(Published=n())    -> aejdois.by.year
+  summarise(Published=n())    -> aeadois.by.year
 
-aejdois.by.year
+aeadois.by.year
 
-aejdois.by.year %>% ungroup() %>% summarize(n=sum(Published)) -> aejdois.total
+aeadois.by.year %>% ungroup() %>% summarize(n=sum(Published)) -> aeadois.total
 
-aejdois.total
-
-#  Some nnumbers for the text
-cat(as.numeric(aejdois.total),
-    file=file.path(TexIncludes,"aejdoistotal.tex"))
+aeadois.total
 
 
-
-
-###################################################
-### code chunk number 5: tab1_1
-###################################################
-# Print yearly breakdown of article count table
-# This redoes Table 1, after R&R
-
-complete_sample <- readRDS(file=file.path(dataloc,"00_complete_sample.Rds"))
-nrow(complete_sample)
-
-# test: match to complete sample by DOI, should be no missing (complete_rate = 1)
-
-left_join(complete_sample,aejdois %>% mutate(match=TRUE),by=c("DOI"="doi")) %>% select(match) %>% skim()
-
-# create the table
-
-complete_sample %>%
-  group_by(year) %>%
-  summarize(Selected=n()) %>%
-  right_join(aejdois.by.year) -> t_entry
-
-
-
-# Add sum row
-t_entry[11,1] = c("Total")
-t_entry[11,2] = colSums(t_entry[,2],na.rm=TRUE)
-t_entry[11,3] = colSums(t_entry[,3],na.rm=TRUE)
-
-t_entry %>%
-  select(year,Published,Selected) %>%
-  mutate(`Percent` = round(Selected/Published*100,2)) %>%
-  pivot_longer(cols = -1 ) %>%
-  pivot_wider(names_from = "year",values_from = "value") %>%
-  rename(` `=name) -> t_entry_t
-
-print(t_entry_t)
-
-# Transpose table
-#t_entry_t <- transpose(t_entry)
-#colnames(t_entry_t) <- t_entry_t[1, ] # the first row will be the header
-#t_entry_t = t_entry_t[-1, ]
-
-
-stargazer(t_entry_t,
-          type="latex",title = "Articles Published and Selected by Year",label="tab:Selection",
-          style="aer",
-          flip=FALSE,summary=FALSE, rownames = FALSE,
-          font.size = fs,column.sep.width = cw,
-          out=file.path(TexIncludes,"table_article_selection.tex"),
-          notes=c("Notes: Assessments made using the entry questionnaire by replicators,",
-                  "prior to attempting to reproduce any tables or figures. The sample of assessed",
-                  "papers comprises those for which we had complete assessment questionnaires."))

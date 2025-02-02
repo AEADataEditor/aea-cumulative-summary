@@ -1,0 +1,293 @@
+
+R version 4.4.2 (2024-10-31) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> # Reconstruct DOI from Manuscript numbers
+> 
+> 
+> ### Load libraries 
+> ### Requirements: have library *here*
+> source(file.path(rprojroot::find_root(rprojroot::has_file("pathconfig.R")),"pathconfig.R"),echo=TRUE)
+
+> basepath <- rprojroot::find_rstudio_root_file()
+
+> datapath <- file.path(basepath, "data")
+
+> interwrk <- file.path(datapath, "interwrk")
+
+> crossrefloc <- file.path(datapath, "crossref")
+
+> openalexloc <- file.path(datapath, "openalex")
+
+> auxilloc <- file.path(datapath, "auxiliary")
+
+> jiraconf <- file.path(datapath, "confidential")
+
+> Outputs <- file.path(basepath, "outputs")
+
+> jiraanon <- file.path(basepath, "data", "anon")
+
+> jirameta <- file.path(basepath, "data", "metadata")
+
+> programs <- file.path(basepath, "programs")
+
+> for (dir in list(datapath, interwrk, crossrefloc, 
++     openalexloc, jiraconf, jiraanon, jirameta, Outputs)) {
++     if (file.exists(dir)) {
++      .... [TRUNCATED] 
+> source(file.path(basepath,"global-libraries.R"),echo=TRUE)
+
+> mran.date <- "2024-12-31"
+
+> get_os <- function() {
++     sysinf <- Sys.info()
++     if (!is.null(sysinf)) {
++         os <- sysinf["sysname"]
++         if (os == "Darwin") 
++   .... [TRUNCATED] 
+
+> if (get_os() == "linux") {
++     options(repos = c(REPO_NAME = paste0("https://packagemanager.posit.co/cran/__linux__/noble/", 
++         mran.date) .... [TRUNCATED] 
+
+> getOption("repos")["CRAN"]
+<NA> 
+  NA 
+
+> pkgTest <- function(x) {
++     if (!require(x, character.only = TRUE)) {
++         install.packages(x, dep = TRUE)
++         if (!require(x, charact .... [TRUNCATED] 
+
+> global.libraries <- c("devtools", "rprojroot", "tictoc", 
++     "here")
+
+> results <- sapply(as.list(global.libraries), pkgTest)
+Loading required package: devtools
+Loading required package: usethis
+Loading required package: rprojroot
+Loading required package: tictoc
+Loading required package: here
+here() starts at /home/rstudio/get-demographics-citations
+> source(file.path(programs,"libraries.R"),echo=TRUE)
+
+> libraries <- c("rcrossref", "purrr", "dplyr", "stringr", 
++     "tidyr", "rjson", "skimr", "tidylog", "readr")
+
+> results <- sapply(as.list(libraries), pkgTest)
+Loading required package: rcrossref
+Loading required package: purrr
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: stringr
+Loading required package: tidyr
+Loading required package: rjson
+Loading required package: skimr
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    separate_wider_delim, separate_wider_position,
+    separate_wider_regex, spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+Loading required package: readr
+
+> cbind(libraries, results)
+      libraries   results
+ [1,] "rcrossref" "OK"   
+ [2,] "purrr"     "OK"   
+ [3,] "dplyr"     "OK"   
+ [4,] "stringr"   "OK"   
+ [5,] "tidyr"     "OK"   
+ [6,] "rjson"     "OK"   
+ [7,] "skimr"     "OK"   
+ [8,] "tidylog"   "OK"   
+ [9,] "readr"     "OK"   
+
+> remotes::install_github("ropensci/openalexR")
+Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+  Use `force = TRUE` to force installation
+> source(file.path(programs,"config.R"),echo=TRUE)
+
+> if (file.exists(file.path(basepath, ".Renviron"))) {
++     readRenviron(file.path(basepath, ".Renviron"))
++ }
+
+> doi_prefix <- "10.1257"
+
+> issns.file <- file.path(crossrefloc, paste0("issns.Rds"))
+
+> doi.file <- file.path(crossrefloc, "crossref_dois")
+
+> doi.file.Rds <- paste(doi.file, "Rds", sep = ".")
+
+> doi.file.csv <- paste(doi.file, "csv", sep = ".")
+
+> openalex.file <- file.path(openalexloc, "openalex-aea")
+
+> openalex.Rds <- paste0(openalex.file, ".Rds")
+
+> citations.latest <- file.path(openalexloc, "citations-per-paper.Rds")
+
+> openalex.authors <- file.path(openalexloc, "openalex-aea-authors")
+
+> openalex.authors.Rds <- paste0(openalex.authors, ".Rds")
+
+> openalex.hindex <- file.path(openalexloc, "openalex-hindex.Rds")
+
+> process_raw <- TRUE
+
+> download_raw <- TRUE
+
+> extractday <- "2025-02-02"
+
+> firstpubday <- "2019-01-01"
+
+> firstpubyear <- substr(firstpubday, 1, 4)
+
+> issue_history.prefix <- "issue_history_"
+
+> manuscript.lookup <- "mc-lookup"
+
+> manuscript.lookup.rds <- file.path(jiraconf, paste0(manuscript.lookup, 
++     ".RDS"))
+
+> assignee.lookup <- "assignee-lookup"
+
+> assignee.lookup.rds <- file.path(jiraconf, paste0(assignee.lookup, 
++     ".RDS"))
+
+> jira.conf.plus.base <- "jira.conf.plus"
+
+> jira.conf.plus.rds <- file.path(jiraconf, paste0(jira.conf.plus.base, 
++     ".RDS"))
+
+> jira.conf.names.csv <- "jira_conf_names.csv"
+
+> members.txt <- file.path(jiraanon, "replicationlab_members.txt")
+
+> jira.anon.base <- "jira.anon"
+
+> jira.anon.rds <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".RDS"))
+
+> jira.anon.csv <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".csv"))
+> 
+> message("===================================================")
+===================================================
+> 
+> jira.conf.plus <- readRDS("~/get-demographics-citations/data/confidential/jira.conf.plus.RDS")
+> 
+> # Necessary file:
+> jira.manuscripts <- readRDS(file=manuscript.lookup.rds)
+> jira.manuscript.dois <- jira.manuscripts %>%
++        mutate(first_chars=str_to_lower(substr(mc_number,1,1))) %>%
++        filter(first_chars %in% c("a","j","p")) %>%
++        # other cleaning
++        filter(substr(mc_number,1,6)!="AEAREP") %>%
++        filter(str_detect(mc_number,"AEJ Policy")==FALSE) %>%
++        # now transform into DOI
++        mutate(first_chars=str_to_lower(substr(mc_number,1,4)),
++               first_chars5=str_to_lower(substr(mc_number,1,5)),
++               doi_article_prefix=case_when(
++                     first_chars == "aeja" ~ "app",
++                     first_chars == "app" ~ "app",
++                     first_chars == "app " ~ "app",
++                     first_chars == "aejp" ~ "pol",
++                     first_chars == "pol2"  ~ "pol",
++                     first_chars5 == "aejma" ~ "mac",
++                     first_chars5 == "aejmi" ~ "mic",
++                     first_chars == "jel-" ~ "jel",
++                     first_chars == "pand" ~ "pandp",
++                     first_chars == "aeri" ~ "aeri",
++                     first_chars == "aer-" ~ "aer",
++                     TRUE                  ~ "")) %>%
++        # now construct DOI
++        # In general, mc_number = AEJAPP-2017-0453
++        #             doi = prefix.20170453
++        mutate( doi_suffix = str_extract_all(mc_number,"\\d") %>% 
++                  map_chr(~ paste(.x, collapse = "")),
++                doi = paste(doi_prefix,
++                            paste(doi_article_prefix,doi_suffix,sep="."),
++                            sep="/")) %>%
++        select(mc_number,mc_number_anon,doi,Journal,doi_article_prefix)
+mutate: new variable 'first_chars' (character) with 11 unique values and 0% NA
+filter: removed 47 rows (2%), 2,429 rows remaining
+filter: no rows removed
+filter: no rows removed
+mutate: changed 2,429 values (100%) of 'first_chars' (0 new NAs)
+        new variable 'first_chars5' (character) with 17 unique values and 0% NA
+        new variable 'doi_article_prefix' (character) with 9 unique values and 0% NA
+mutate: new variable 'doi_suffix' (character) with 2,232 unique values and 0% NA
+        new variable 'doi' (character) with 2,389 unique values and 0% NA
+select: dropped 3 variables (first_chars, first_chars5, doi_suffix)
+> 
+> table(jira.manuscript.dois$Journal,jira.manuscript.dois$doi_article_prefix)
+                       
+                            aer aeri app jel mac mic pandp pol
+                          1   4    1   7   0   3   0     1   7
+  AEA P&P                 1   0    0   0   0   0   0   484   0
+  AEJ:Applied Economics   0   0    0 299   0   0   0     0   0
+  AEJ:Economic Policy     0   0    0   0   0   0   0     0 343
+  AEJ:Macro               0   0    0   0   0 261   0     0   1
+  AEJ:Micro               0   0    0   0   0   0 159     1   0
+  AER                     4 516    0   1   0   0   0     0   0
+  AER:Insights            0   0  150   0   0   0   0     0   0
+  JEL                     3   0    0   0  63   0   0     0   0
+  JEP                   119   0    0   0   0   0   0     0   0
+> 
+> saveRDS(jira.manuscript.dois,file=file.path(jiraconf,"manuscript-dois.lookup.Rds"))
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  4.106   0.376   4.228 

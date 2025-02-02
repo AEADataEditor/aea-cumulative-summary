@@ -11,9 +11,9 @@ exit 0
 fi
 
 PWD=$(pwd)
-repo=${PWD##*/}
-tag=${1:-2023-03-12}
-space=larsvilhuber
+repo=verse
+tag=${1:-4.4.2}
+space=rocker
 case $USER in
   *vilhuber|*herbert)
   WORKSPACE=$PWD

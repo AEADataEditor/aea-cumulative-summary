@@ -1,0 +1,215 @@
+
+R version 4.4.2 (2024-10-31) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> # Getting in-scope articles
+> # Code derived from another project
+> # NOTE: THIS REQUIRES R 4.2.0 and newer packages!
+> #
+> 
+> source(file.path(rprojroot::find_rstudio_root_file(),"pathconfig.R"),echo=FALSE)
+> source(file.path(basepath,"global-libraries.R"),echo=FALSE)
+Loading required package: devtools
+Loading required package: usethis
+Loading required package: rprojroot
+Loading required package: tictoc
+Loading required package: here
+here() starts at /home/rstudio/get-demographics-citations
+> source(file.path(programs,"libraries.R"), echo=FALSE)
+Loading required package: rcrossref
+Loading required package: purrr
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: stringr
+Loading required package: tidyr
+Loading required package: rjson
+Loading required package: skimr
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    separate_wider_delim, separate_wider_position,
+    separate_wider_regex, spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+Loading required package: readr
+Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+  Use `force = TRUE` to force installation
+> source(file.path(programs,"config.R"), echo=FALSE)
+> 
+> library(rcrossref)
+> 
+> # filenames in config.R
+> 
+> 
+> # Each journal has a ISSN
+> if (!file.exists(issns.file)) {
++   issns <- data.frame(matrix(ncol=3,nrow=9))
++   names(issns) <- c("journal","issn","lastdate")
++   tmp.date <- c("2000-01")
++ issns[1,] <- c("American Economic Journal: Applied Economics","1945-7790",tmp.date)
++ issns[2,] <- c("American Economic Journal: Economic Policy","1945-774X",tmp.date)
++ issns[3,] <- c("American Economic Journal: Macroeconomics", "1945-7715",tmp.date)
++ issns[4,] <- c("American Economic Journal: Microeconomics", "1945-7685",tmp.date)
++ issns[5,] <- c("The American Economic Review","1944-7981",tmp.date)
++ issns[6,] <- c("The American Economic Review","0002-8282",tmp.date)  # print ISSN is needed!
++ issns[7,] <- c("Journal of Economic Literature","2328-8175",tmp.date)
++ issns[8,] <- c("Journal of Economic Perspectives","1944-7965",tmp.date)
++ issns[9,] <- c("American Economic Review: Insights","2640-2068",tmp.date)
++ 
++   saveRDS(issns %>% filter(!is.na(journal)), file= issns.file)
++ } else {
++   warning(paste("Reusing file: ",issns.file))
++ }
+Warning message:
+Reusing file:  /home/rstudio/get-demographics-citations/data/crossref/issns.Rds 
+> 
+> issns <- readRDS(file = issns.file)
+> 
+> if (file.exists(doi.file.Rds) ) {
++   warning(paste("Re-using file:",doi.file.Rds))
++ } else{
++   new.df <- NA
++   for ( x in 1:nrow(issns) ) {
++     message(paste0("Processing ",issns[x,"journal"]," (",issns[x,"issn"],")"))
++     new <- cr_journals(issn=issns[x,"issn"], works=TRUE,
++                        filter=c(from_pub_date=issns[x,"lastdate"]),
++                        select=c("DOI","title","published-print","volume","issue","container-title","author"),
++                        .progress="text",
++                        cursor = "*")
++     if ( x == 1 ) {
++       new.df <- as.data.frame(new$data)
++       new.df$issn = issns[x,"issn"]
++     } else {
++       tmp.df <- as.data.frame(new$data)
++       if ( nrow(tmp.df) > 0 ) {
++         tmp.df$issn = issns[x,"issn"]
++         new.df <- bind_rows(new.df,tmp.df)
++       } else {
++         warning(paste0("Did not find records for ISSN=",issns[x,"issn"]))
++       }
++       rm(tmp.df)
++     }
++   }
++   # filters
++   saveRDS(new.df, file=  file.path(interwrk,"new.Rds"))
++   rm(new)
++ }
+Warning message:
+Re-using file: /home/rstudio/get-demographics-citations/data/crossref/crossref_dois.Rds 
+> 
+> 
+> # filters
+> new.df <- readRDS(file.path(interwrk,"new.Rds"))
+> nrow(new.df)
+[1] 8447
+> new.df %>%
++   filter(!is.null(author)) %>%
++   filter(title!="Front Matter") %>%
++   filter(!str_detect(title,"Volume")) %>%
++   filter(!str_detect(title,"Forthcoming")) %>%
++   # filter(title!="Editor's Note") %>%
++   # More robust
++   filter(str_sub(doi, start= -1)!="i")-> filtered.df
+filter: no rows removed
+filter: removed 381 rows (5%), 8,066 rows remaining
+filter: removed 43 rows (1%), 8,023 rows remaining
+filter: removed 3 rows (<1%), 8,020 rows remaining
+filter: removed 103 rows (1%), 7,917 rows remaining
+> nrow(filtered.df)
+[1] 7917
+> saveRDS(filtered.df, file=  doi.file.Rds)
+> 
+> # clean read-back
+> aeadois <- readRDS(file= doi.file.Rds)
+> nrow(aeadois)
+[1] 7917
+> 
+> # subset to the years in-scope: 2019+
+> aeadois %>%
++   mutate(year=substr(published.print,1,4)) %>%
++   filter(year >= 2019 ) %>%
++   filter(published.print >= '2019-01-01') -> aeadois.subset 
+mutate: new variable 'year' (character) with 26 unique values and 0% NA
+filter: removed 5,573 rows (70%), 2,344 rows remaining
+filter: no rows removed
+> aeadois.subset %>%
++   group_by(year) %>%
++   summarise(Published=n())    -> aeadois.by.year
+group_by: one grouping variable (year)
+summarise: now 7 rows and 2 columns, ungrouped
+> 
+> aeadois.by.year
+# A tibble: 7 × 2
+  year  Published
+  <chr>     <int>
+1 2019        318
+2 2020        306
+3 2021        335
+4 2022        402
+5 2023        368
+6 2024        519
+7 2025         96
+> 
+> aeadois.by.year %>% ungroup() %>% summarize(n=sum(Published)) -> aeadois.total
+ungroup: no grouping variables remain
+summarize: now one row and one column, ungrouped
+> 
+> aeadois.total
+# A tibble: 1 × 1
+      n
+  <int>
+1  2344
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  4.065   0.437   4.207 

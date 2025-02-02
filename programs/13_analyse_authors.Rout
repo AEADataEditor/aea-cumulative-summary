@@ -1,0 +1,141 @@
+
+R version 4.4.2 (2024-10-31) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> # Identify author stats
+> #
+> source(file.path(rprojroot::find_rstudio_root_file(),"pathconfig.R"),echo=FALSE)
+> source(file.path(basepath,"global-libraries.R"),echo=FALSE)
+Loading required package: devtools
+Loading required package: usethis
+Loading required package: rprojroot
+Loading required package: tictoc
+Loading required package: here
+here() starts at /home/rstudio/get-demographics-citations
+> source(file.path(programs,"libraries.R"), echo=FALSE)
+Loading required package: rcrossref
+Loading required package: purrr
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: stringr
+Loading required package: tidyr
+Loading required package: rjson
+Loading required package: skimr
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    separate_wider_delim, separate_wider_position,
+    separate_wider_regex, spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+Loading required package: readr
+Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+  Use `force = TRUE` to force installation
+> source(file.path(programs,"config.R"), echo=FALSE)
+> 
+> 
+> # filenames in config.R
+> 
+> 
+> 
+> # Save files
+> #crossref.only <- readRDS(file=file.path(Outputs,"crossref_only.Rds"))
+> jira.plus.authors <- readRDS(file=file.path(interwrk,"jira_plus_authors.Rds"))
+> 
+> authorlist.aea.df <- jira.plus.authors %>%
++   select(author,doi) %>%
++   filter(!is.na(author)) %>%
++   tidyr::unnest(author) 
+select: dropped 13 variables (mc_number, mc_number_anon, Journal, doi_article_prefix, container.title, …)
+filter: no rows removed
+> 
+> unique_authors <- authorlist.aea.df %>%
++   select(given,family) %>%
++   distinct(given,family) %>%
++   arrange(family,given)
+select: dropped 6 variables (sequence, affiliation.name, suffix, ORCID, authenticated.orcid, …)
+distinct: removed 1,058 rows (25%), 3,154 rows remaining
+> 
+> unique_authors_published <- nrow(unique_authors)
+> articles_published <- jira.plus.authors %>% filter(!is.na(container.title)) %>% nrow()
+filter: removed 919 rows (37%), 1,582 rows remaining
+> avg_unique_authors_per_article <- unique_authors_published / articles_published
+> 
+> author_per_article <- authorlist.aea.df %>%
++   select(given,family,doi) %>%
++   group_by(doi) %>%
++   summarize(num_authors=n()) %>%
++   ungroup()
+select: dropped 5 variables (sequence, affiliation.name, suffix, ORCID, authenticated.orcid)
+group_by: one grouping variable (doi)
+summarize: now 1,480 rows and 2 columns, ungrouped
+ungroup: no grouping variables remain
+>   
+> 
+> avg_author_per_article <- author_per_article%>%
++   summarize(num_authors=sum(num_authors)/n())
+summarize: now one row and one column, ungrouped
+> 
+> 
+> articles_not_published <- jira.plus.authors %>% 
++   filter(is.na(container.title)) %>% 
++   # remove the JEP and P&P
++   filter(doi_article_prefix %in% c("","pandp","jep")) %>%
++   nrow()
+filter: removed 1,582 rows (63%), 919 rows remaining
+filter: removed 305 rows (33%), 614 rows remaining
+> 
+> articles_not_published * avg_unique_authors_per_article
+[1] 1224.119
+> 
+> proc.time()
+   user  system elapsed 
+  3.738   0.398   3.879 

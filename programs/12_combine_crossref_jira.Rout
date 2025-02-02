@@ -1,0 +1,167 @@
+
+R version 4.4.2 (2024-10-31) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> # Getting in-scope articles
+> # Code derived from another project
+> # NOTE: THIS REQUIRES R 4.2.0 and newer packages!
+> #
+> 
+> source(file.path(rprojroot::find_rstudio_root_file(),"pathconfig.R"),echo=FALSE)
+> source(file.path(basepath,"global-libraries.R"),echo=FALSE)
+Loading required package: devtools
+Loading required package: usethis
+Loading required package: rprojroot
+Loading required package: tictoc
+Loading required package: here
+here() starts at /home/rstudio/get-demographics-citations
+> source(file.path(programs,"libraries.R"), echo=FALSE)
+Loading required package: rcrossref
+Loading required package: purrr
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: stringr
+Loading required package: tidyr
+Loading required package: rjson
+Loading required package: skimr
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    separate_wider_delim, separate_wider_position,
+    separate_wider_regex, spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+Loading required package: readr
+Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+  Use `force = TRUE` to force installation
+> source(file.path(programs,"config.R"), echo=FALSE)
+> 
+> 
+> # filenames in config.R
+> 
+> 
+> # clean read-back
+> aeadois <- readRDS(file= doi.file.Rds)
+> nrow(aeadois)
+[1] 7917
+> 
+> # subset to the years in-scope: 2019+
+> aeadois %>%
++   mutate(year=substr(published.print,1,4)) %>%
++   filter(year >= firstpubyear ) %>%
++   filter(published.print >= firstpubday)  %>% 
++   mutate(match=TRUE)-> aeadois.subset 
+mutate: new variable 'year' (character) with 26 unique values and 0% NA
+filter: removed 5,573 rows (70%), 2,344 rows remaining
+filter: no rows removed
+mutate: new variable 'match' (logical) with one unique value and 0% NA
+> 
+> 
+> # Match to processed files
+> 
+> jira.manuscript.dois <- readRDS(file=file.path(jiraconf,"manuscript-dois.lookup.Rds"))
+> 
+> nrow(jira.manuscript.dois)
+[1] 2429
+> 
+> # test: match to complete sample by DOI, should be no missing (complete_rate = 1)
+> 
+> jira.plus.authors <- left_join(jira.manuscript.dois,
++                                aeadois.subset,by=c("doi"="doi")) %>%
++                      mutate(published = if_else(is.na(match),FALSE,TRUE))
+left_join: added 9 columns (container.title, published.print, issue, title, volume, …)
+           > rows only in jira.manuscript.dois    919
+           > rows only in aeadois.subset       (  792)
+           > matched rows                       1,582    (includes duplicates)
+           >                                   =======
+           > rows total                         2,501
+mutate: new variable 'published' (logical) with 2 unique values and 0% NA
+> 
+> crossref.only <-right_join(jira.manuscript.dois,
++                            aeadois.subset,by=c("doi"="doi")) %>% filter(is.na(mc_number_anon))
+right_join: added 9 columns (container.title, published.print, issue, title, volume, …)
+            > rows only in jira.manuscript.dois (  919)
+            > rows only in aeadois.subset          792
+            > matched rows                       1,582    (includes duplicates)
+            >                                   =======
+            > rows total                         2,374
+filter: removed 1,582 rows (67%), 792 rows remaining
+> 
+> jira.plus.authors %>%
++   group_by(container.title,published) %>%
++   summarize(count=n())
+group_by: 2 grouping variables (container.title, published)
+summarize: now 8 rows and 3 columns, one group variable remaining (container.title)
+# A tibble: 8 × 3
+# Groups:   container.title [8]
+  container.title                              published count
+  <chr>                                        <lgl>     <int>
+1 American Economic Journal: Applied Economics TRUE        251
+2 American Economic Journal: Economic Policy   TRUE        301
+3 American Economic Journal: Macroeconomics    TRUE        219
+4 American Economic Journal: Microeconomics    TRUE        140
+5 American Economic Review                     TRUE        532
+6 American Economic Review: Insights           TRUE        129
+7 Journal of Economic Literature               TRUE         10
+8 <NA>                                         FALSE       919
+> 
+> ## Save files
+> 
+> 
+> # Save files
+> saveRDS(crossref.only,file=file.path(Outputs,"crossref_only.Rds"))
+> saveRDS(jira.plus.authors,file=file.path(interwrk,"jira_plus_authors.Rds"))
+> 
+> 
+> 
+> proc.time()
+   user  system elapsed 
+  3.795   0.475   3.934 

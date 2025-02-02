@@ -1,0 +1,418 @@
+
+R version 4.4.2 (2024-10-31) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+[Previously saved workspace restored]
+
+> # Anonymize JIRA process files and construct variables
+> # Harry Son, Lars Vilhuber, Linda Wang
+> # 2021-05-20
+> 
+> ## Inputs: export_(extractday).csv
+> ## Outputs: file.path(jiraconf,"temp.jira.conf.RDS") file.path(jiraanon,"temp.jira.anon.RDS")
+> 
+> ### Load libraries 
+> ### Requirements: have library *here*
+> source(file.path(rprojroot::find_root(rprojroot::has_file("pathconfig.R")),"pathconfig.R"),echo=TRUE)
+
+> basepath <- rprojroot::find_rstudio_root_file()
+
+> datapath <- file.path(basepath, "data")
+
+> interwrk <- file.path(datapath, "interwrk")
+
+> crossrefloc <- file.path(datapath, "crossref")
+
+> openalexloc <- file.path(datapath, "openalex")
+
+> auxilloc <- file.path(datapath, "auxiliary")
+
+> jiraconf <- file.path(datapath, "confidential")
+
+> Outputs <- file.path(basepath, "outputs")
+
+> jiraanon <- file.path(basepath, "data", "anon")
+
+> jirameta <- file.path(basepath, "data", "metadata")
+
+> programs <- file.path(basepath, "programs")
+
+> for (dir in list(datapath, interwrk, crossrefloc, 
++     openalexloc, jiraconf, jiraanon, jirameta, Outputs)) {
++     if (file.exists(dir)) {
++      .... [TRUNCATED] 
+> source(file.path(basepath,"global-libraries.R"),echo=TRUE)
+
+> mran.date <- "2024-12-31"
+
+> get_os <- function() {
++     sysinf <- Sys.info()
++     if (!is.null(sysinf)) {
++         os <- sysinf["sysname"]
++         if (os == "Darwin") 
++   .... [TRUNCATED] 
+
+> if (get_os() == "linux") {
++     options(repos = c(REPO_NAME = paste0("https://packagemanager.posit.co/cran/__linux__/noble/", 
++         mran.date) .... [TRUNCATED] 
+
+> getOption("repos")["CRAN"]
+<NA> 
+  NA 
+
+> pkgTest <- function(x) {
++     if (!require(x, character.only = TRUE)) {
++         install.packages(x, dep = TRUE)
++         if (!require(x, charact .... [TRUNCATED] 
+
+> global.libraries <- c("devtools", "rprojroot", "tictoc", 
++     "here")
+
+> results <- sapply(as.list(global.libraries), pkgTest)
+Loading required package: devtools
+Loading required package: usethis
+Loading required package: rprojroot
+Loading required package: tictoc
+Loading required package: here
+here() starts at /home/rstudio/get-demographics-citations
+> source(file.path(programs,"libraries.R"),echo=TRUE)
+
+> libraries <- c("rcrossref", "purrr", "dplyr", "stringr", 
++     "tidyr", "rjson", "skimr", "tidylog", "readr")
+
+> results <- sapply(as.list(libraries), pkgTest)
+Loading required package: rcrossref
+Loading required package: purrr
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: stringr
+Loading required package: tidyr
+Loading required package: rjson
+Loading required package: skimr
+Loading required package: tidylog
+
+Attaching package: ‘tidylog’
+
+The following objects are masked from ‘package:tidyr’:
+
+    drop_na, fill, gather, pivot_longer, pivot_wider, replace_na,
+    separate_wider_delim, separate_wider_position,
+    separate_wider_regex, spread, uncount
+
+The following objects are masked from ‘package:dplyr’:
+
+    add_count, add_tally, anti_join, count, distinct, distinct_all,
+    distinct_at, distinct_if, filter, filter_all, filter_at, filter_if,
+    full_join, group_by, group_by_all, group_by_at, group_by_if,
+    inner_join, left_join, mutate, mutate_all, mutate_at, mutate_if,
+    relocate, rename, rename_all, rename_at, rename_if, rename_with,
+    right_join, sample_frac, sample_n, select, select_all, select_at,
+    select_if, semi_join, slice, slice_head, slice_max, slice_min,
+    slice_sample, slice_tail, summarise, summarise_all, summarise_at,
+    summarise_if, summarize, summarize_all, summarize_at, summarize_if,
+    tally, top_frac, top_n, transmute, transmute_all, transmute_at,
+    transmute_if, ungroup
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+Loading required package: readr
+
+> cbind(libraries, results)
+      libraries   results
+ [1,] "rcrossref" "OK"   
+ [2,] "purrr"     "OK"   
+ [3,] "dplyr"     "OK"   
+ [4,] "stringr"   "OK"   
+ [5,] "tidyr"     "OK"   
+ [6,] "rjson"     "OK"   
+ [7,] "skimr"     "OK"   
+ [8,] "tidylog"   "OK"   
+ [9,] "readr"     "OK"   
+
+> remotes::install_github("ropensci/openalexR")
+Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+  Use `force = TRUE` to force installation
+> source(file.path(programs,"config.R"),echo=TRUE)
+
+> if (file.exists(file.path(basepath, ".Renviron"))) {
++     readRenviron(file.path(basepath, ".Renviron"))
++ }
+
+> doi_prefix <- "10.1257"
+
+> issns.file <- file.path(crossrefloc, paste0("issns.Rds"))
+
+> doi.file <- file.path(crossrefloc, "crossref_dois")
+
+> doi.file.Rds <- paste(doi.file, "Rds", sep = ".")
+
+> doi.file.csv <- paste(doi.file, "csv", sep = ".")
+
+> openalex.file <- file.path(openalexloc, "openalex-aea")
+
+> openalex.Rds <- paste0(openalex.file, ".Rds")
+
+> citations.latest <- file.path(openalexloc, "citations-per-paper.Rds")
+
+> openalex.authors <- file.path(openalexloc, "openalex-aea-authors")
+
+> openalex.authors.Rds <- paste0(openalex.authors, ".Rds")
+
+> openalex.hindex <- file.path(openalexloc, "openalex-hindex.Rds")
+
+> process_raw <- TRUE
+
+> download_raw <- TRUE
+
+> extractday <- "2025-02-02"
+
+> firstpubday <- "2019-01-01"
+
+> firstpubyear <- substr(firstpubday, 1, 4)
+
+> issue_history.prefix <- "issue_history_"
+
+> manuscript.lookup <- "mc-lookup"
+
+> manuscript.lookup.rds <- file.path(jiraconf, paste0(manuscript.lookup, 
++     ".RDS"))
+
+> assignee.lookup <- "assignee-lookup"
+
+> assignee.lookup.rds <- file.path(jiraconf, paste0(assignee.lookup, 
++     ".RDS"))
+
+> jira.conf.plus.base <- "jira.conf.plus"
+
+> jira.conf.plus.rds <- file.path(jiraconf, paste0(jira.conf.plus.base, 
++     ".RDS"))
+
+> jira.conf.names.csv <- "jira_conf_names.csv"
+
+> members.txt <- file.path(jiraanon, "replicationlab_members.txt")
+
+> jira.anon.base <- "jira.anon"
+
+> jira.anon.rds <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".RDS"))
+
+> jira.anon.csv <- file.path(jiraanon, paste0(jira.anon.base, 
++     ".csv"))
+> 
+> message("===================================================")
+===================================================
+> 
+> if ( file.exists(here::here("programs","confidential-config.R"))) {
++   source(here::here("programs","confidential-config.R"))
++   warning("Confidential config found.")
++   # if not sourced, randomness will ensue
++ }
+Warning message:
+Confidential config found. 
+> 
+> exportfile <- paste0(issue_history.prefix,extractday,".csv")
+> 
+> # double-check for existence of issue history file.
+> 
+> if (! file.exists(file.path(jiraconf,exportfile))) {
++   process_raw = FALSE
++   message("Input file for anonymization not found - setting global parameter to FALSE")
++ } else {
++   message("Input found for confidential data - setting process_raw to TRUE")
++ }
+Input found for confidential data - setting process_raw to TRUE
+> 
+> if ( process_raw == TRUE ) {
++   # Read in data extracted from Jira
++   warning("===================================================\n    Starting processing ... ")
++ 
++   jira.conf.raw <- read.csv(file.path(jiraconf,exportfile), stringsAsFactors = FALSE) %>%
++     # the first field name can be iffy. It is the Key (sic)...
++     rename(ticket=Key) %>%
++     mutate(mc_number = sub('\\..*', '', Manuscript.Central.identifier))  %>%
++     # Some corrections
++     mutate(mc_number = case_when(
++       substr(Manuscript.Central.identifier,1,4) == "aer." ~ str_replace(Manuscript.Central.identifier,".","-"),
++       substr(Manuscript.Central.identifier,1,4) == "pol." ~ str_replace(Manuscript.Central.identifier,".","-"),
++       substr(Manuscript.Central.identifier,1,4) == "app." ~ str_replace(Manuscript.Central.identifier,".","-"),
++       TRUE ~  mc_number
++     )) %>%
++     # Only Tasks
++     filter(Issue.Type == "Task") %>%
++     # Possibly temporary issue?
++     filter(ticket == Key.1) %>%
++     select(-Key.1) %>%
++     filter(str_detect(ticket,"AEAREP"))
++   
++   # Write out names as currently captured to TEMP
++   names(jira.conf.raw) %>% as.data.frame() -> tmp
++   names(tmp) <- c("Name")
++   write_excel_csv(tmp,file=file.path(interwrk,jira.conf.names.csv),col_names = TRUE)
++   
++   
++   warning(paste0("If you need to edit the names to be included,\n",
++                  "edit the file ",file.path(interwrk,jira.conf.names.csv),"\n",
++                  "save it in ",jirameta, "with the same name, ran run again."))
++   
++   # We need to remove all sub-tasks of AEAREP-1407
++ placeholders <- jira.conf.raw %>% filter(ticket =="AEAREP-1407") %>%
++                select(ticket,Sub.tasks) %>%
++                separate_longer_delim(Sub.tasks,delim=",") %>%
++                mutate(Sub.tasks = str_trim(Sub.tasks)) %>%
++                select(ticket = Sub.tasks) %>%
++                distinct() 
++ 
++   # now do an anti_join
++   jira.conf.cleaned <- jira.conf.raw %>%
++     anti_join(placeholders) 
++ 
++   
++   # anonymize mc_number. We will use that later only for those not published
++   jira.manuscripts <- jira.conf.cleaned %>% 
++     select(ticket,mc_number,Journal,As.Of.Date) %>% 
++     filter(mc_number!="") %>%
++     group_by(ticket) %>%
++     arrange(desc(As.Of.Date)) %>%
++     filter(row_number() == 1) %>%
++     ungroup() %>%
++     distinct(mc_number,Journal)   %>%
++     mutate(rand = runif(1)) %>%
++     arrange(rand) %>%
++     mutate(mc_number_anon = row_number()) %>%
++     select(-rand) %>%
++     arrange(mc_number)
++ 
++   # Create anonymized Assignee number
++   jira.assignees <- jira.conf.cleaned %>%
++     select(Assignee) %>%
++     filter(Assignee!="") %>%
++     filter(Assignee!="Automation for Jira") %>%
++     filter(Assignee!="LV (Data Editor)") %>%
++     distinct() %>%
++     mutate(rand = runif(1),
++            rand = if_else(Assignee=="Lars Vilhuber",0,rand)) %>%
++     arrange(rand) %>%
++     mutate(assignee_anon = row_number()) %>%
++     select(-rand) %>%
++     arrange(Assignee)
++   
++   # Now merge the anonymized data on, keep & rename relevant variables
++   jira.conf.tmp <- jira.conf.cleaned %>% 
++     left_join(jira.manuscripts %>% select(mc_number,mc_number_anon),by="mc_number") %>%
++     left_join(jira.assignees,by="Assignee") %>%
++     mutate(date_created = as.Date(substr(Created, 1,10), "%Y-%m-%d"),
++            date_asof    = as.Date(substr(As.Of.Date, 1,10), "%Y-%m-%d")) %>%
++     rename(subtask=Sub.tasks) %>%
++     mutate(has_subtask=ifelse(subtask!="","Yes","No")) 
++   jira.conf.tmp %>%
++     select(ticket, mc_number, mc_number_anon, Manuscript.Central.identifier,
++            MCStatus, 
++            openICPSR.Project.Number,RepositoryDOI,
++            Journal,JournalIssueMonth,JournalIssueYear,  
++            Status, Changed.Fields,
++            date_created, date_asof, 
++            assignee_anon,   Issue.Type, subtask, has_subtask, Update.type) -> jira.conf.plus
++   
++   # save anonymized and confidential data
++   
++   # Save files
++   saveRDS(jira.manuscripts,file=manuscript.lookup.rds)
++   saveRDS(jira.assignees,  file=assignee.lookup.rds)
++   saveRDS(jira.conf.plus,
++           file=jira.conf.plus.rds)
++ 
++   
++ } else { 
++   print("Not processing anonymization due to global parameter.")
++ }
+rename: renamed one variable (ticket)
+mutate: new variable 'mc_number' (character) with 2,477 unique values and 0% NA
+mutate: changed 587 values (<1%) of 'mc_number' (0 new NAs)
+filter: removed 16,593 rows (9%), 168,061 rows remaining
+filter: no rows removed
+select: dropped one variable (Key.1)
+filter: removed 572 rows (<1%), 167,489 rows remaining
+filter: removed 167,480 rows (>99%), 9 rows remaining
+select: dropped 15 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
+mutate: changed 1,872 values (>99%) of 'Sub.tasks' (0 new NAs)
+select: dropped one variable (Sub.tasks)
+distinct: removed 1,672 rows (89%), 209 rows remaining
+Joining with `by = join_by(ticket)`
+anti_join: added no columns
+           > rows only in x             166,721
+           > rows only in placeholders (     22)
+           > matched rows              (    768)
+           >                           =========
+           > rows total                 166,721
+select: dropped 13 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
+filter: removed 12,455 rows (7%), 154,266 rows remaining
+group_by: one grouping variable (ticket)
+filter (grouped): removed 150,320 rows (97%), 3,946 rows remaining (removed 0 groups, 3,946 groups remaining)
+ungroup: no grouping variables remain
+distinct: removed 1,470 rows (37%), 2,476 rows remaining
+mutate: new variable 'rand' (double) with one unique value and 0% NA
+mutate: new variable 'mc_number_anon' (integer) with 2,476 unique values and 0% NA
+select: dropped one variable (rand)
+select: dropped 16 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
+filter: removed 50,115 rows (30%), 116,606 rows remaining
+filter: no rows removed
+filter: removed 3,684 rows (3%), 112,922 rows remaining
+distinct: removed 112,749 rows (>99%), 173 rows remaining
+mutate: new variable 'rand' (double) with 2 unique values and 0% NA
+mutate: new variable 'assignee_anon' (integer) with 173 unique values and 0% NA
+select: dropped one variable (rand)
+select: dropped one variable (Journal)
+left_join: added one column (mc_number_anon)
+           > rows only in x                           12,978
+           > rows only in jira.manuscripts %>% se.. (      0)
+           > matched rows                            156,826    (includes duplicates)
+           >                                        =========
+           > rows total                              169,804
+left_join: added one column (assignee_anon)
+           > rows only in x                54,576
+           > rows only in jira.assignees (      0)
+           > matched rows                 115,228
+           >                             =========
+           > rows total                   169,804
+mutate: new variable 'date_created' (Date) with 1,256 unique values and 0% NA
+        new variable 'date_asof' (Date) with 2,028 unique values and 0% NA
+rename: renamed one variable (subtask)
+mutate: new variable 'has_subtask' (character) with 2 unique values and 0% NA
+select: dropped 3 variables (Assignee, Created, As.Of.Date)
+Warning messages:
+1: ===================================================
+    Starting processing ...  
+2: If you need to edit the names to be included,
+edit the file /home/rstudio/get-demographics-citations/data/interwrk/jira_conf_names.csv
+save it in /home/rstudio/get-demographics-citations/data/metadatawith the same name, ran run again. 
+> 
+> proc.time()
+   user  system elapsed 
+  7.804   0.513   8.019 

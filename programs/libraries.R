@@ -9,7 +9,7 @@
 
 #libraries <- c("dplyr","devtools","rcrossref","readr","data.table","readxl", "rjson","ggplot2","stringr","skimr")
 
-libraries <- c("rcrossref", "purrr")
+libraries <- c("rcrossref", "purrr","dplyr","stringr","tidyr","rjson","skimr","tidylog","readr")
 
 
 results <- sapply(as.list(libraries), pkgTest)
