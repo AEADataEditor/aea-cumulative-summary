@@ -10,9 +10,7 @@ EOF
 exit 0
 fi
 
-PWD=$(pwd)
-repo=${PWD##*/}
-space=larsvilhuber
+. ${PWD}/.myconfig.sh
 
 ## maybe it's local only
 echo "============================================================="
@@ -21,4 +19,7 @@ echo ""
 docker images | grep $space/$repo | awk ' { print $2 } ' | tee tags.txt
 echo ""
 echo " -- Stored in tags.txt --"
+echo "============================================================="
+echo " Searching for remote containers for $space/$repo "
+echo ""
 
