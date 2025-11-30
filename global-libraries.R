@@ -1,7 +1,7 @@
 ####################################
 # global libraries used everywhere #
 ####################################
-mran.date <- "2024-12-31"
+#mran.date <- "2024-12-31"
 
 get_os <- function(){
   sysinf <- Sys.info()
@@ -19,17 +19,17 @@ get_os <- function(){
   tolower(os)
 }
 
-if (get_os()=="linux") {
+#if (get_os()=="linux") {
 ## Rstudio Package Manager
   #if (getOption("repos")["CRAN"]=="@CRAN@") {
-  options(repos = c(REPO_NAME = paste0("https://packagemanager.posit.co/cran/__linux__/noble/",mran.date)))
+#  options(repos = c(REPO_NAME = paste0("https://packagemanager.posit.co/cran/__linux__/jammy/",mran.date)))
   #} else {
   #message("Repo for CRAN already set")
   #}
-} else {
+#} else {
 ## MRAN
-  options(repos=paste0("https://packagemanager.posit.co/cran/",mran.date))
-}
+#  options(repos=paste0("https://packagemanager.posit.co/cran/",mran.date))
+#}
 
 getOption("repos")["CRAN"]
 

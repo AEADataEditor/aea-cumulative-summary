@@ -28,7 +28,7 @@ Loading required package: usethis
 Loading required package: rprojroot
 Loading required package: tictoc
 Loading required package: here
-here() starts at /home/rstudio/get-demographics-citations
+here() starts at /home/rstudio/aea-cumulative-summary
 > source(file.path(programs,"libraries.R"), echo=FALSE)
 Loading required package: rcrossref
 Loading required package: purrr
@@ -77,7 +77,7 @@ The following object is masked from ‘package:stats’:
     filter
 
 Loading required package: readr
-Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"), echo=FALSE)
 > 
@@ -102,11 +102,11 @@ filter: no rows removed
 +   distinct(given,family) %>%
 +   arrange(family,given)
 select: dropped 6 variables (sequence, affiliation.name, suffix, ORCID, authenticated.orcid, …)
-distinct: removed 1,058 rows (25%), 3,154 rows remaining
+distinct: removed 1,440 rows (28%), 3,631 rows remaining
 > 
 > unique_authors_published <- nrow(unique_authors)
 > articles_published <- jira.plus.authors %>% filter(!is.na(container.title)) %>% nrow()
-filter: removed 919 rows (37%), 1,582 rows remaining
+filter: removed 1,074 rows (36%), 1,883 rows remaining
 > avg_unique_authors_per_article <- unique_authors_published / articles_published
 > 
 > author_per_article <- authorlist.aea.df %>%
@@ -116,7 +116,7 @@ filter: removed 919 rows (37%), 1,582 rows remaining
 +   ungroup()
 select: dropped 5 variables (sequence, affiliation.name, suffix, ORCID, authenticated.orcid)
 group_by: one grouping variable (doi)
-summarize: now 1,480 rows and 2 columns, ungrouped
+summarize: now 1,724 rows and 2 columns, ungrouped
 ungroup: no grouping variables remain
 >   
 > 
@@ -130,12 +130,12 @@ summarize: now one row and one column, ungrouped
 +   # remove the JEP and P&P
 +   filter(doi_article_prefix %in% c("","pandp","jep")) %>%
 +   nrow()
-filter: removed 1,582 rows (63%), 919 rows remaining
-filter: removed 305 rows (33%), 614 rows remaining
+filter: removed 1,883 rows (64%), 1,074 rows remaining
+filter: removed 378 rows (35%), 696 rows remaining
 > 
 > articles_not_published * avg_unique_authors_per_article
-[1] 1224.119
+[1] 1342.101
 > 
 > proc.time()
    user  system elapsed 
-  3.738   0.398   3.879 
+  4.126   1.542   4.139 

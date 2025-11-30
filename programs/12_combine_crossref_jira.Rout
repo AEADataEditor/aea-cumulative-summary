@@ -31,7 +31,7 @@ Loading required package: usethis
 Loading required package: rprojroot
 Loading required package: tictoc
 Loading required package: here
-here() starts at /home/rstudio/get-demographics-citations
+here() starts at /home/rstudio/aea-cumulative-summary
 > source(file.path(programs,"libraries.R"), echo=FALSE)
 Loading required package: rcrossref
 Loading required package: purrr
@@ -80,7 +80,7 @@ The following object is masked from ‘package:stats’:
     filter
 
 Loading required package: readr
-Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"), echo=FALSE)
 > 
@@ -91,7 +91,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has no
 > # clean read-back
 > aeadois <- readRDS(file= doi.file.Rds)
 > nrow(aeadois)
-[1] 7917
+[1] 8341
 > 
 > # subset to the years in-scope: 2019+
 > aeadois %>%
@@ -100,17 +100,17 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has no
 +   filter(published.print >= firstpubday)  %>% 
 +   mutate(match=TRUE)-> aeadois.subset 
 mutate: new variable 'year' (character) with 26 unique values and 0% NA
-filter: removed 5,573 rows (70%), 2,344 rows remaining
+filter: removed 5,263 rows (63%), 3,078 rows remaining
 filter: no rows removed
 mutate: new variable 'match' (logical) with one unique value and 0% NA
 > 
 > 
 > # Match to processed files
 > 
-> jira.manuscript.dois <- readRDS(file=file.path(jiraconf,"manuscript-dois.lookup.Rds"))
+> jira.manuscript.dois <- readRDS(file=file.path(jiraconf,"manuscript-dois.lookup.Rds")) 
 > 
 > nrow(jira.manuscript.dois)
-[1] 2429
+[1] 2807
 > 
 > # test: match to complete sample by DOI, should be no missing (complete_rate = 1)
 > 
@@ -118,50 +118,97 @@ mutate: new variable 'match' (logical) with one unique value and 0% NA
 +                                aeadois.subset,by=c("doi"="doi")) %>%
 +                      mutate(published = if_else(is.na(match),FALSE,TRUE))
 left_join: added 9 columns (container.title, published.print, issue, title, volume, …)
-           > rows only in jira.manuscript.dois    919
-           > rows only in aeadois.subset       (  792)
-           > matched rows                       1,582    (includes duplicates)
+           > rows only in jira.manuscript.dois  1,074
+           > rows only in aeadois.subset       (1,204)
+           > matched rows                       1,883    (includes duplicates)
            >                                   =======
-           > rows total                         2,501
+           > rows total                         2,957
 mutate: new variable 'published' (logical) with 2 unique values and 0% NA
 > 
+> # get the Journal -> MC prefix  back
+> 
+> journal.abbrev <- read_csv(file.path(datapath,"metadata","journal_abbrev.csv")) %>%
++                              select(Journal,mc_prefix)
+Rows: 9 Columns: 3
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (3): Journal, mc_prefix, doi_article_prefix
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+select: dropped one variable (doi_article_prefix)
+> 
 > crossref.only <-right_join(jira.manuscript.dois,
-+                            aeadois.subset,by=c("doi"="doi")) %>% filter(is.na(mc_number_anon))
++                            aeadois.subset,by=c("doi"="doi")) %>% 
++                   filter(is.na(mc_number_anon)) %>%
++                   # replace full journal name by short name 
++                   mutate(Journal = str_replace_all(container.title,
++                                                 c("American Economic Journal: "="AEJ:",
++                                                   "American Economic Review"="AER",
++                                                   "Journal of Economic Literature"="JEL",
++                                                   "Journal of Economic Perspectives"="JEP",
++                                                   "American Economic Review: Insights"="AER:Insights"))) %>%
++                   # one last fix
++                   mutate(Journal = if_else(Journal=="AER: Insights","AER:Insights",Journal),
++                          Journal = if_else(Journal=="AEJ:Macroeconomics","AEJ:Macro",Journal),
++                          Journal = if_else(Journal=="AEJ:Microeconomics","AEJ:Micro",Journal)) %>%
++                   # merge on the journal.abbrev
++                   left_join(journal.abbrev,by=c("Journal"="Journal")) %>%
++                   # reconvert to the manuscript number
++                   mutate(mc_number = paste0(mc_prefix,"-",
++                                     str_sub(doi, start=-8, end=-5),"-",
++                                     str_sub(doi, start=-4)))
 right_join: added 9 columns (container.title, published.print, issue, title, volume, …)
-            > rows only in jira.manuscript.dois (  919)
-            > rows only in aeadois.subset          792
-            > matched rows                       1,582    (includes duplicates)
+            > rows only in jira.manuscript.dois (1,074)
+            > rows only in aeadois.subset        1,204
+            > matched rows                       1,883    (includes duplicates)
             >                                   =======
-            > rows total                         2,374
-filter: removed 1,582 rows (67%), 792 rows remaining
+            > rows total                         3,087
+filter: removed 1,883 rows (61%), 1,204 rows remaining
+mutate: changed 1,204 values (100%) of 'Journal' (1,204 fewer NAs)
+mutate: changed 436 values (36%) of 'Journal' (0 new NAs)
+left_join: added one column (mc_prefix)
+           > rows only in x                   0
+           > rows only in journal.abbrev (    1)
+           > matched rows                 1,204
+           >                             =======
+           > rows total                   1,204
+mutate: changed 1,204 values (100%) of 'mc_number' (1,204 fewer NAs)
+> 
+> 
+> # Who are these?
 > 
 > jira.plus.authors %>%
-+   group_by(container.title,published) %>%
-+   summarize(count=n())
-group_by: 2 grouping variables (container.title, published)
-summarize: now 8 rows and 3 columns, one group variable remaining (container.title)
-# A tibble: 8 × 3
-# Groups:   container.title [8]
-  container.title                              published count
-  <chr>                                        <lgl>     <int>
-1 American Economic Journal: Applied Economics TRUE        251
-2 American Economic Journal: Economic Policy   TRUE        301
-3 American Economic Journal: Macroeconomics    TRUE        219
-4 American Economic Journal: Microeconomics    TRUE        140
-5 American Economic Review                     TRUE        532
-6 American Economic Review: Insights           TRUE        129
-7 Journal of Economic Literature               TRUE         10
-8 <NA>                                         FALSE       919
++   group_by(Journal, published) %>%
++   summarize(count = n(), .groups = "drop") %>%
++   tidyr::pivot_wider(names_from = published, values_from = count, values_fill = 0, names_prefix = "published_")
+group_by: 2 grouping variables (Journal, published)
+summarize: now 17 rows and 3 columns, ungrouped
+# A tibble: 10 × 3
+   Journal                 published_FALSE published_TRUE
+   <chr>                             <int>          <int>
+ 1 ""                                    1              0
+ 2 "AEA P&P"                           550              0
+ 3 "AEJ:Applied Economics"              72            270
+ 4 "AEJ:Economic Policy"                60            341
+ 5 "AEJ:Macro"                          63            246
+ 6 "AEJ:Micro"                          20            156
+ 7 "AER"                                94            696
+ 8 "AER:Insights"                       21            155
+ 9 "JEL"                                56             19
+10 "JEP"                               137              0
 > 
 > ## Save files
 > 
 > 
 > # Save files
 > saveRDS(crossref.only,file=file.path(Outputs,"crossref_only.Rds"))
+> # also export as CSV
+> write_csv(crossref.only,file=file.path(Outputs,"crossref_only.csv"))
 > saveRDS(jira.plus.authors,file=file.path(interwrk,"jira_plus_authors.Rds"))
 > 
 > 
 > 
 > proc.time()
    user  system elapsed 
-  3.795   0.475   3.934 
+  4.557   1.569   4.737 

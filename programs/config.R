@@ -38,11 +38,12 @@ openalex.hindex      <- file.path(openalexloc,"openalex-hindex.Rds")
 ## These control whether the external data is downloaded and processed.
 process_raw <- TRUE
 download_raw <- TRUE
+download_crossref <- TRUE
 
 ## This pins the date of the to-be-processed file
 
-extractday <- "2025-02-02"
-firstpubday <- "2019-01-01"
+extractday <- "2025-11-29"
+firstpubday <- "2018-01-01"
 firstpubyear <- substr(firstpubday,1,4)
 
 # filenames

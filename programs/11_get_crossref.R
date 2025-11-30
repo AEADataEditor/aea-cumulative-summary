@@ -35,6 +35,14 @@ issns[9,] <- c("American Economic Review: Insights","2640-2068",tmp.date)
 
 issns <- readRDS(file = issns.file)
 
+if ( download_crossref == TRUE ) {
+  warning("Deleting existing DOI file to force re-download.")
+  if ( file.exists(doi.file.Rds) ) {
+    file.remove(doi.file.Rds) 
+  }
+}
+
+
 if (file.exists(doi.file.Rds) ) {
   warning(paste("Re-using file:",doi.file.Rds))
 } else{

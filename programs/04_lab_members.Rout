@@ -58,8 +58,6 @@ Type 'q()' to quit R.
 +      .... [TRUNCATED] 
 > source(file.path(basepath,"global-libraries.R"),echo=TRUE)
 
-> mran.date <- "2024-12-31"
-
 > get_os <- function() {
 +     sysinf <- Sys.info()
 +     if (!is.null(sysinf)) {
@@ -67,13 +65,9 @@ Type 'q()' to quit R.
 +         if (os == "Darwin") 
 +   .... [TRUNCATED] 
 
-> if (get_os() == "linux") {
-+     options(repos = c(REPO_NAME = paste0("https://packagemanager.posit.co/cran/__linux__/noble/", 
-+         mran.date) .... [TRUNCATED] 
-
 > getOption("repos")["CRAN"]
-<NA> 
-  NA 
+                                             CRAN 
+"https://p3m.dev/cran/__linux__/noble/2025-02-27" 
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -89,7 +83,7 @@ Loading required package: usethis
 Loading required package: rprojroot
 Loading required package: tictoc
 Loading required package: here
-here() starts at /home/rstudio/get-demographics-citations
+here() starts at /home/rstudio/aea-cumulative-summary
 > source(file.path(programs,"libraries.R"),echo=TRUE)
 
 > libraries <- c("rcrossref", "purrr", "dplyr", "stringr", 
@@ -157,7 +151,7 @@ Loading required package: readr
  [9,] "readr"     "OK"   
 
 > remotes::install_github("ropensci/openalexR")
-Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"),echo=TRUE)
 
@@ -191,9 +185,11 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has no
 
 > download_raw <- TRUE
 
-> extractday <- "2025-02-02"
+> download_crossref <- TRUE
 
-> firstpubday <- "2019-01-01"
+> extractday <- "2025-11-29"
+
+> firstpubday <- "2018-01-01"
 
 > firstpubyear <- substr(firstpubday, 1, 4)
 
@@ -228,7 +224,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has no
 > 
 > exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang",
 +                 "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
-+                 "LV (Data Editor)")
++                 "LV (Data Editor)","Ilanith Nizard","Julia Hewitt")
 > 
 > # This contains unmapped IDs that need to be cleaned up
 > 
@@ -260,22 +256,22 @@ chr (1): Assignee
 +   mutate(Assignee = if_else(is.na(Name),Assignee,Name)) %>%
 +   distinct(Assignee) 
 filter: no rows removed
-filter: removed 7 rows (4%), 166 rows remaining
+filter: removed 9 rows (4%), 201 rows remaining
 Joining with `by = join_by(Assignee)`
 left_join: added one column (Name)
-           > rows only in x       159
+           > rows only in x       194
            > rows only in lookup (  2)
            > matched rows           7
            >                     =====
-           > rows total           166
+           > rows total           201
 Joining with `by = join_by(Assignee)`
 anti_join: added no columns
-           > rows only in x        166
+           > rows only in x        201
            > rows only in removal (  2)
            > matched rows         (  0)
            >                      =====
-           > rows total            166
-mutate: changed 7 values (4%) of 'Assignee' (0 new NAs)
+           > rows total            201
+mutate: changed 7 values (3%) of 'Assignee' (0 new NAs)
 distinct: no rows removed
 > 
 > write.table(lab.member, file = file.path(Outputs,"replicationlab_members.txt"), sep = "\t",
@@ -287,4 +283,4 @@ distinct: no rows removed
 > 
 > proc.time()
    user  system elapsed 
-  3.997   0.358   4.111 
+  4.124   1.541   4.158 

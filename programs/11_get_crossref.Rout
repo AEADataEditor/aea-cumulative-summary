@@ -31,7 +31,7 @@ Loading required package: usethis
 Loading required package: rprojroot
 Loading required package: tictoc
 Loading required package: here
-here() starts at /home/rstudio/get-demographics-citations
+here() starts at /home/rstudio/aea-cumulative-summary
 > source(file.path(programs,"libraries.R"), echo=FALSE)
 Loading required package: rcrossref
 Loading required package: purrr
@@ -80,7 +80,7 @@ The following object is masked from ‘package:stats’:
     filter
 
 Loading required package: readr
-Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"), echo=FALSE)
 > 
@@ -109,9 +109,20 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has no
 +   warning(paste("Reusing file: ",issns.file))
 + }
 Warning message:
-Reusing file:  /home/rstudio/get-demographics-citations/data/crossref/issns.Rds 
+Reusing file:  /home/rstudio/aea-cumulative-summary/data/crossref/issns.Rds 
 > 
 > issns <- readRDS(file = issns.file)
+> 
+> if ( download_crossref == TRUE ) {
++   warning("Deleting existing DOI file to force re-download.")
++   if ( file.exists(doi.file.Rds) ) {
++     file.remove(doi.file.Rds) 
++   }
++ }
+[1] TRUE
+Warning message:
+Deleting existing DOI file to force re-download. 
+> 
 > 
 > if (file.exists(doi.file.Rds) ) {
 +   warning(paste("Re-using file:",doi.file.Rds))
@@ -142,14 +153,21 @@ Reusing file:  /home/rstudio/get-demographics-citations/data/crossref/issns.Rds
 +   saveRDS(new.df, file=  file.path(interwrk,"new.Rds"))
 +   rm(new)
 + }
-Warning message:
-Re-using file: /home/rstudio/get-demographics-citations/data/crossref/crossref_dois.Rds 
+Processing American Economic Journal: Applied Economics (1945-7790)
+Processing American Economic Journal: Economic Policy (1945-774X)
+Processing American Economic Journal: Macroeconomics (1945-7715)
+Processing American Economic Journal: Microeconomics (1945-7685)
+Processing The American Economic Review (1944-7981)
+Processing The American Economic Review (0002-8282)
+Processing Journal of Economic Literature (2328-8175)
+Processing Journal of Economic Perspectives (1944-7965)
+Processing American Economic Review: Insights (2640-2068)
 > 
 > 
 > # filters
 > new.df <- readRDS(file.path(interwrk,"new.Rds"))
 > nrow(new.df)
-[1] 8447
+[1] 8904
 > new.df %>%
 +   filter(!is.null(author)) %>%
 +   filter(title!="Front Matter") %>%
@@ -159,18 +177,18 @@ Re-using file: /home/rstudio/get-demographics-citations/data/crossref/crossref_d
 +   # More robust
 +   filter(str_sub(doi, start= -1)!="i")-> filtered.df
 filter: no rows removed
-filter: removed 381 rows (5%), 8,066 rows remaining
-filter: removed 43 rows (1%), 8,023 rows remaining
-filter: removed 3 rows (<1%), 8,020 rows remaining
-filter: removed 103 rows (1%), 7,917 rows remaining
+filter: removed 411 rows (5%), 8,493 rows remaining
+filter: removed 48 rows (1%), 8,445 rows remaining
+filter: removed 3 rows (<1%), 8,442 rows remaining
+filter: removed 101 rows (1%), 8,341 rows remaining
 > nrow(filtered.df)
-[1] 7917
+[1] 8341
 > saveRDS(filtered.df, file=  doi.file.Rds)
 > 
 > # clean read-back
 > aeadois <- readRDS(file= doi.file.Rds)
 > nrow(aeadois)
-[1] 7917
+[1] 8341
 > 
 > # subset to the years in-scope: 2019+
 > aeadois %>%
@@ -178,7 +196,7 @@ filter: removed 103 rows (1%), 7,917 rows remaining
 +   filter(year >= 2019 ) %>%
 +   filter(published.print >= '2019-01-01') -> aeadois.subset 
 mutate: new variable 'year' (character) with 26 unique values and 0% NA
-filter: removed 5,573 rows (70%), 2,344 rows remaining
+filter: removed 5,530 rows (66%), 2,811 rows remaining
 filter: no rows removed
 > aeadois.subset %>%
 +   group_by(year) %>%
@@ -190,13 +208,13 @@ summarise: now 7 rows and 2 columns, ungrouped
 # A tibble: 7 × 2
   year  Published
   <chr>     <int>
-1 2019        318
+1 2019        324
 2 2020        306
-3 2021        335
-4 2022        402
+3 2021        340
+4 2022        399
 5 2023        368
-6 2024        519
-7 2025         96
+6 2024        518
+7 2025        556
 > 
 > aeadois.by.year %>% ungroup() %>% summarize(n=sum(Published)) -> aeadois.total
 ungroup: no grouping variables remain
@@ -206,10 +224,10 @@ summarize: now one row and one column, ungrouped
 # A tibble: 1 × 1
       n
   <int>
-1  2344
+1  2811
 > 
 > 
 > 
 > proc.time()
    user  system elapsed 
-  4.065   0.437   4.207 
+ 27.142   1.785  82.235 

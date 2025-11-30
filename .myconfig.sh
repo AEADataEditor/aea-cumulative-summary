@@ -1,5 +1,5 @@
-repo=report-aea-data-editor-2024
-space=aeadataeditor
+repo=tidyverse
+space=rocker
 dockerrepo=$(echo $space/$repo | tr [A-Z] [a-z] | sed 's/-internal//')
 case $USER in
   vilhuber)
@@ -10,4 +10,4 @@ case $USER in
   WORKSPACE=/workspaces
   ;;
 esac
-tag=2025-02-05
+tag=4.4.2

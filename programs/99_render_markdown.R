@@ -7,4 +7,4 @@ source(file.path(basepath,"rmd-libraries.R"),echo=FALSE)
 
 library(rmarkdown)
 
-render(here::here("impacts_of_aea_data_editing.Rmd", output_format = c("html_document", "word_document"))
+render(here::here("impacts_of_aea_data_editing.Rmd"), output_format = c("html_document", "word_document"))

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-pip install -r ../requirements.txt
+#pip install -r ../requirements.txt
 
 # ./01_download_issues.py -s 2018-01-01 -e 2024-12-31 
 R CMD BATCH 02_conf_process_jira.R

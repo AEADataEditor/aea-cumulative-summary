@@ -14,7 +14,7 @@ source(file.path(programs,"config.R"),echo=TRUE)
 
 exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang",
                 "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
-                "LV (Data Editor)")
+                "LV (Data Editor)","Ilanith Nizard","Julia Hewitt")
 
 # This contains unmapped IDs that need to be cleaned up
 

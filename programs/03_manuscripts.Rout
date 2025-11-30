@@ -54,8 +54,6 @@ Type 'q()' to quit R.
 +      .... [TRUNCATED] 
 > source(file.path(basepath,"global-libraries.R"),echo=TRUE)
 
-> mran.date <- "2024-12-31"
-
 > get_os <- function() {
 +     sysinf <- Sys.info()
 +     if (!is.null(sysinf)) {
@@ -63,13 +61,9 @@ Type 'q()' to quit R.
 +         if (os == "Darwin") 
 +   .... [TRUNCATED] 
 
-> if (get_os() == "linux") {
-+     options(repos = c(REPO_NAME = paste0("https://packagemanager.posit.co/cran/__linux__/noble/", 
-+         mran.date) .... [TRUNCATED] 
-
 > getOption("repos")["CRAN"]
-<NA> 
-  NA 
+                                             CRAN 
+"https://p3m.dev/cran/__linux__/noble/2025-02-27" 
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -85,7 +79,7 @@ Loading required package: usethis
 Loading required package: rprojroot
 Loading required package: tictoc
 Loading required package: here
-here() starts at /home/rstudio/get-demographics-citations
+here() starts at /home/rstudio/aea-cumulative-summary
 > source(file.path(programs,"libraries.R"),echo=TRUE)
 
 > libraries <- c("rcrossref", "purrr", "dplyr", "stringr", 
@@ -153,7 +147,7 @@ Loading required package: readr
  [9,] "readr"     "OK"   
 
 > remotes::install_github("ropensci/openalexR")
-Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"),echo=TRUE)
 
@@ -187,9 +181,11 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has no
 
 > download_raw <- TRUE
 
-> extractday <- "2025-02-02"
+> download_crossref <- TRUE
 
-> firstpubday <- "2019-01-01"
+> extractday <- "2025-11-29"
+
+> firstpubday <- "2018-01-01"
 
 > firstpubyear <- substr(firstpubday, 1, 4)
 
@@ -225,7 +221,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has no
 > message("===================================================")
 ===================================================
 > 
-> jira.conf.plus <- readRDS("~/get-demographics-citations/data/confidential/jira.conf.plus.RDS")
+> jira.conf.plus <- readRDS(jira.conf.plus.rds)
 > 
 > # Necessary file:
 > jira.manuscripts <- readRDS(file=manuscript.lookup.rds)
@@ -261,33 +257,33 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has no
 +                            sep="/")) %>%
 +        select(mc_number,mc_number_anon,doi,Journal,doi_article_prefix)
 mutate: new variable 'first_chars' (character) with 11 unique values and 0% NA
-filter: removed 47 rows (2%), 2,429 rows remaining
+filter: removed 52 rows (2%), 2,807 rows remaining
 filter: no rows removed
 filter: no rows removed
-mutate: changed 2,429 values (100%) of 'first_chars' (0 new NAs)
+mutate: changed 2,807 values (100%) of 'first_chars' (0 new NAs)
         new variable 'first_chars5' (character) with 17 unique values and 0% NA
         new variable 'doi_article_prefix' (character) with 9 unique values and 0% NA
-mutate: new variable 'doi_suffix' (character) with 2,232 unique values and 0% NA
-        new variable 'doi' (character) with 2,389 unique values and 0% NA
+mutate: new variable 'doi_suffix' (character) with 2,597 unique values and 0% NA
+        new variable 'doi' (character) with 2,791 unique values and 0% NA
 select: dropped 3 variables (first_chars, first_chars5, doi_suffix)
 > 
 > table(jira.manuscript.dois$Journal,jira.manuscript.dois$doi_article_prefix)
                        
                             aer aeri app jel mac mic pandp pol
-                          1   4    1   7   0   3   0     1   7
-  AEA P&P                 1   0    0   0   0   0   0   484   0
-  AEJ:Applied Economics   0   0    0 299   0   0   0     0   0
-  AEJ:Economic Policy     0   0    0   0   0   0   0     0 343
-  AEJ:Macro               0   0    0   0   0 261   0     0   1
-  AEJ:Micro               0   0    0   0   0   0 159     1   0
-  AER                     4 516    0   1   0   0   0     0   0
-  AER:Insights            0   0  150   0   0   0   0     0   0
-  JEL                     3   0    0   0  63   0   0     0   0
-  JEP                   119   0    0   0   0   0   0     0   0
+                          0   0    0   0   0   0   0     1   0
+  AEA P&P                 1   0    0   0   0   0   0   549   0
+  AEJ:Applied Economics   0   0    0 342   0   0   0     0   0
+  AEJ:Economic Policy     0   0    0   0   0   0   0     0 401
+  AEJ:Macro               0   0    0   0   0 309   0     0   0
+  AEJ:Micro               0   0    0   0   0   0 175     1   0
+  AER                     4 635    0   1   0   0   0     0   0
+  AER:Insights            0   0  176   0   0   0   0     0   0
+  JEL                     3   0    0   0  72   0   0     0   0
+  JEP                   137   0    0   0   0   0   0     0   0
 > 
 > saveRDS(jira.manuscript.dois,file=file.path(jiraconf,"manuscript-dois.lookup.Rds"))
 > 
 > 
 > proc.time()
    user  system elapsed 
-  4.106   0.376   4.228 
+  4.328   1.604   4.434 

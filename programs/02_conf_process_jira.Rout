@@ -58,8 +58,6 @@ Type 'q()' to quit R.
 +      .... [TRUNCATED] 
 > source(file.path(basepath,"global-libraries.R"),echo=TRUE)
 
-> mran.date <- "2024-12-31"
-
 > get_os <- function() {
 +     sysinf <- Sys.info()
 +     if (!is.null(sysinf)) {
@@ -67,13 +65,9 @@ Type 'q()' to quit R.
 +         if (os == "Darwin") 
 +   .... [TRUNCATED] 
 
-> if (get_os() == "linux") {
-+     options(repos = c(REPO_NAME = paste0("https://packagemanager.posit.co/cran/__linux__/noble/", 
-+         mran.date) .... [TRUNCATED] 
-
 > getOption("repos")["CRAN"]
-<NA> 
-  NA 
+                                             CRAN 
+"https://p3m.dev/cran/__linux__/noble/2025-02-27" 
 
 > pkgTest <- function(x) {
 +     if (!require(x, character.only = TRUE)) {
@@ -89,7 +83,7 @@ Loading required package: usethis
 Loading required package: rprojroot
 Loading required package: tictoc
 Loading required package: here
-here() starts at /home/rstudio/get-demographics-citations
+here() starts at /home/rstudio/aea-cumulative-summary
 > source(file.path(programs,"libraries.R"),echo=TRUE)
 
 > libraries <- c("rcrossref", "purrr", "dplyr", "stringr", 
@@ -157,7 +151,7 @@ Loading required package: readr
  [9,] "readr"     "OK"   
 
 > remotes::install_github("ropensci/openalexR")
-Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"),echo=TRUE)
 
@@ -191,9 +185,11 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has no
 
 > download_raw <- TRUE
 
-> extractday <- "2025-02-02"
+> download_crossref <- TRUE
 
-> firstpubday <- "2019-01-01"
+> extractday <- "2025-11-29"
+
+> firstpubday <- "2018-01-01"
 
 > firstpubyear <- substr(firstpubday, 1, 4)
 
@@ -234,8 +230,6 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (64dfd4bc) has no
 +   warning("Confidential config found.")
 +   # if not sourced, randomness will ensue
 + }
-Warning message:
-Confidential config found. 
 > 
 > exportfile <- paste0(issue_history.prefix,extractday,".csv")
 > 
@@ -353,56 +347,56 @@ Input found for confidential data - setting process_raw to TRUE
 +   print("Not processing anonymization due to global parameter.")
 + }
 rename: renamed one variable (ticket)
-mutate: new variable 'mc_number' (character) with 2,477 unique values and 0% NA
-mutate: changed 587 values (<1%) of 'mc_number' (0 new NAs)
-filter: removed 16,593 rows (9%), 168,061 rows remaining
+mutate: new variable 'mc_number' (character) with 2,861 unique values and 0% NA
+mutate: changed 747 values (<1%) of 'mc_number' (0 new NAs)
+filter: removed 130 rows (<1%), 189,188 rows remaining
 filter: no rows removed
 select: dropped one variable (Key.1)
-filter: removed 572 rows (<1%), 167,489 rows remaining
-filter: removed 167,480 rows (>99%), 9 rows remaining
+filter: removed 3 rows (<1%), 189,185 rows remaining
+filter: removed 189,176 rows (>99%), 9 rows remaining
 select: dropped 15 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
-mutate: changed 1,872 values (>99%) of 'Sub.tasks' (0 new NAs)
+mutate: changed 2,142 values (>99%) of 'Sub.tasks' (0 new NAs)
 select: dropped one variable (Sub.tasks)
-distinct: removed 1,672 rows (89%), 209 rows remaining
+distinct: removed 1,912 rows (89%), 239 rows remaining
 Joining with `by = join_by(ticket)`
 anti_join: added no columns
-           > rows only in x             166,721
-           > rows only in placeholders (     22)
-           > matched rows              (    768)
+           > rows only in x             189,185
+           > rows only in placeholders (    239)
+           > matched rows              (      0)
            >                           =========
-           > rows total                 166,721
+           > rows total                 189,185
 select: dropped 13 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
-filter: removed 12,455 rows (7%), 154,266 rows remaining
+filter: removed 11,670 rows (6%), 177,515 rows remaining
 group_by: one grouping variable (ticket)
-filter (grouped): removed 150,320 rows (97%), 3,946 rows remaining (removed 0 groups, 3,946 groups remaining)
+filter (grouped): removed 173,361 rows (98%), 4,154 rows remaining (removed 0 groups, 4,154 groups remaining)
 ungroup: no grouping variables remain
-distinct: removed 1,470 rows (37%), 2,476 rows remaining
+distinct: removed 1,295 rows (31%), 2,859 rows remaining
 mutate: new variable 'rand' (double) with one unique value and 0% NA
-mutate: new variable 'mc_number_anon' (integer) with 2,476 unique values and 0% NA
+mutate: new variable 'mc_number_anon' (integer) with 2,859 unique values and 0% NA
 select: dropped one variable (rand)
 select: dropped 16 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
-filter: removed 50,115 rows (30%), 116,606 rows remaining
+filter: removed 56,843 rows (30%), 132,342 rows remaining
 filter: no rows removed
-filter: removed 3,684 rows (3%), 112,922 rows remaining
-distinct: removed 112,749 rows (>99%), 173 rows remaining
+filter: removed 4,339 rows (3%), 128,003 rows remaining
+distinct: removed 127,793 rows (>99%), 210 rows remaining
 mutate: new variable 'rand' (double) with 2 unique values and 0% NA
-mutate: new variable 'assignee_anon' (integer) with 173 unique values and 0% NA
+mutate: new variable 'assignee_anon' (integer) with 210 unique values and 0% NA
 select: dropped one variable (rand)
 select: dropped one variable (Journal)
 left_join: added one column (mc_number_anon)
-           > rows only in x                           12,978
+           > rows only in x                           12,346
            > rows only in jira.manuscripts %>% se.. (      0)
-           > matched rows                            156,826    (includes duplicates)
+           > matched rows                            177,741    (includes duplicates)
            >                                        =========
-           > rows total                              169,804
+           > rows total                              190,087
 left_join: added one column (assignee_anon)
-           > rows only in x                54,576
+           > rows only in x                61,267
            > rows only in jira.assignees (      0)
-           > matched rows                 115,228
+           > matched rows                 128,820
            >                             =========
-           > rows total                   169,804
-mutate: new variable 'date_created' (Date) with 1,256 unique values and 0% NA
-        new variable 'date_asof' (Date) with 2,028 unique values and 0% NA
+           > rows total                   190,087
+mutate: new variable 'date_created' (Date) with 1,384 unique values and 0% NA
+        new variable 'date_asof' (Date) with 2,319 unique values and 0% NA
 rename: renamed one variable (subtask)
 mutate: new variable 'has_subtask' (character) with 2 unique values and 0% NA
 select: dropped 3 variables (Assignee, Created, As.Of.Date)
@@ -410,9 +404,9 @@ Warning messages:
 1: ===================================================
     Starting processing ...  
 2: If you need to edit the names to be included,
-edit the file /home/rstudio/get-demographics-citations/data/interwrk/jira_conf_names.csv
-save it in /home/rstudio/get-demographics-citations/data/metadatawith the same name, ran run again. 
+edit the file /home/rstudio/aea-cumulative-summary/data/interwrk/jira_conf_names.csv
+save it in /home/rstudio/aea-cumulative-summary/data/metadatawith the same name, ran run again. 
 > 
 > proc.time()
    user  system elapsed 
-  7.804   0.513   8.019 
+  7.594   1.576   7.814 

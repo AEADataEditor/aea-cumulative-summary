@@ -10,7 +10,7 @@ source(file.path(programs,"config.R"),echo=TRUE)
 
 message("===================================================")
 
-jira.conf.plus <- readRDS("~/get-demographics-citations/data/confidential/jira.conf.plus.RDS")
+jira.conf.plus <- readRDS(jira.conf.plus.rds)
 
 # Necessary file:
 jira.manuscripts <- readRDS(file=manuscript.lookup.rds)
