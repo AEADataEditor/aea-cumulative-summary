@@ -347,54 +347,54 @@ Input found for confidential data - setting process_raw to TRUE
 +   print("Not processing anonymization due to global parameter.")
 + }
 rename: renamed one variable (ticket)
-mutate: new variable 'mc_number' (character) with 2,861 unique values and 0% NA
+mutate: new variable 'mc_number' (character) with 2,863 unique values and 0% NA
 mutate: changed 747 values (<1%) of 'mc_number' (0 new NAs)
-filter: removed 130 rows (<1%), 189,188 rows remaining
+filter: removed 130 rows (<1%), 189,218 rows remaining
 filter: no rows removed
 select: dropped one variable (Key.1)
-filter: removed 3 rows (<1%), 189,185 rows remaining
-filter: removed 189,176 rows (>99%), 9 rows remaining
+filter: removed 3 rows (<1%), 189,215 rows remaining
+filter: removed 189,206 rows (>99%), 9 rows remaining
 select: dropped 15 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
 mutate: changed 2,142 values (>99%) of 'Sub.tasks' (0 new NAs)
 select: dropped one variable (Sub.tasks)
 distinct: removed 1,912 rows (89%), 239 rows remaining
 Joining with `by = join_by(ticket)`
 anti_join: added no columns
-           > rows only in x             189,185
+           > rows only in x             189,215
            > rows only in placeholders (    239)
            > matched rows              (      0)
            >                           =========
-           > rows total                 189,185
+           > rows total                 189,215
 select: dropped 13 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
-filter: removed 11,670 rows (6%), 177,515 rows remaining
+filter: removed 11,670 rows (6%), 177,545 rows remaining
 group_by: one grouping variable (ticket)
-filter (grouped): removed 173,361 rows (98%), 4,154 rows remaining (removed 0 groups, 4,154 groups remaining)
+filter (grouped): removed 173,391 rows (98%), 4,154 rows remaining (removed 0 groups, 4,154 groups remaining)
 ungroup: no grouping variables remain
 distinct: removed 1,295 rows (31%), 2,859 rows remaining
 mutate: new variable 'rand' (double) with one unique value and 0% NA
 mutate: new variable 'mc_number_anon' (integer) with 2,859 unique values and 0% NA
 select: dropped one variable (rand)
 select: dropped 16 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
-filter: removed 56,843 rows (30%), 132,342 rows remaining
+filter: removed 56,843 rows (30%), 132,372 rows remaining
 filter: no rows removed
-filter: removed 4,339 rows (3%), 128,003 rows remaining
-distinct: removed 127,793 rows (>99%), 210 rows remaining
+filter: removed 4,339 rows (3%), 128,033 rows remaining
+distinct: removed 127,823 rows (>99%), 210 rows remaining
 mutate: new variable 'rand' (double) with 2 unique values and 0% NA
 mutate: new variable 'assignee_anon' (integer) with 210 unique values and 0% NA
 select: dropped one variable (rand)
 select: dropped one variable (Journal)
 left_join: added one column (mc_number_anon)
-           > rows only in x                           12,346
+           > rows only in x                           12,360
            > rows only in jira.manuscripts %>% se.. (      0)
-           > matched rows                            177,741    (includes duplicates)
+           > matched rows                            177,757    (includes duplicates)
            >                                        =========
-           > rows total                              190,087
+           > rows total                              190,117
 left_join: added one column (assignee_anon)
            > rows only in x                61,267
            > rows only in jira.assignees (      0)
-           > matched rows                 128,820
+           > matched rows                 128,850
            >                             =========
-           > rows total                   190,087
+           > rows total                   190,117
 mutate: new variable 'date_created' (Date) with 1,384 unique values and 0% NA
         new variable 'date_asof' (Date) with 2,319 unique values and 0% NA
 rename: renamed one variable (subtask)
@@ -409,4 +409,4 @@ save it in /home/rstudio/aea-cumulative-summary/data/metadatawith the same name,
 > 
 > proc.time()
    user  system elapsed 
-  7.594   1.576   7.814 
+  7.887   1.652   8.102 

@@ -283,4 +283,4 @@ distinct: no rows removed
 > 
 > proc.time()
    user  system elapsed 
-  4.124   1.541   4.158 
+  4.291   1.582   4.352 

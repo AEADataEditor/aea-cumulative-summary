@@ -230,4 +230,4 @@ summarize: now one row and one column, ungrouped
 > 
 > proc.time()
    user  system elapsed 
- 27.142   1.785  82.235 
+ 26.544   1.839  75.499 

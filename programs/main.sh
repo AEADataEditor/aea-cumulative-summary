@@ -2,7 +2,7 @@
 
 #pip install -r ../requirements.txt
 
-# ./01_download_issues.py -s 2018-01-01 -e 2024-12-31 
+#./01_download_issues.py -s 2018-01-01 -e 2025-11-29 
 R CMD BATCH 02_conf_process_jira.R
 R CMD BATCH 03_manuscripts.R
 R CMD BATCH 04_lab_members.R

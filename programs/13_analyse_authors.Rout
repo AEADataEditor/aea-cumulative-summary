@@ -138,4 +138,4 @@ filter: removed 378 rows (35%), 696 rows remaining
 > 
 > proc.time()
    user  system elapsed 
-  4.126   1.542   4.139 
+  4.052   1.605   4.118 

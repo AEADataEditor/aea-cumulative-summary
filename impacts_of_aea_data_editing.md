@@ -28,8 +28,8 @@ Each round of the manuscript evaluation generates a report. Most papers do no mo
 
 |Journal               | Reports|
 |:---------------------|-------:|
-|AEA P&P               |     572|
-|AEJ:Applied Economics |     973|
+|AEA P&P               |     573|
+|AEJ:Applied Economics |     974|
 |AEJ:Economic Policy   |     609|
 |AEJ:Macro             |     485|
 |AEJ:Micro             |     258|
@@ -69,11 +69,11 @@ While most articles published in AEA journals are not published by undergraduate
 
 
 
-Overall, **201 undergraduate students**  have been engaged in this academic activity. Their names are listed in the Appendix. In addition, a pilot project in Summer 2024 provided interships to 9 undergraduates from various undergraduate institutions around the U.S.
+Overall, **201 undergraduate students**  have been engaged in this academic activity. Their names are listed in the Appendix. In addition, since the Summer of 2024, I have provided interships to 9 undergraduates each year from various undergraduate institutions around the U.S.
 
 ## Graduate Students and Pre-docs 
 
-Naturally, this is not a job to manage as a single person. The LDI Replication Lab has had the participation of **six graduate students**, and **three pre-docs**. Both prior pre-docs have gone on to do an economics Ph.D. program. 
+Naturally, this is not a job to manage as a single person. The LDI Replication Lab has had the participation of **seven graduate students**, and **three pre-docs**. Both prior pre-docs have gone on to do an economics Ph.D. program. 
 
 ## Impact elsewhere
 

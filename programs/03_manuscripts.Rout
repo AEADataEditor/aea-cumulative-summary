@@ -261,7 +261,7 @@ filter: removed 52 rows (2%), 2,807 rows remaining
 filter: no rows removed
 filter: no rows removed
 mutate: changed 2,807 values (100%) of 'first_chars' (0 new NAs)
-        new variable 'first_chars5' (character) with 17 unique values and 0% NA
+        new variable 'first_chars5' (character) with 16 unique values and 0% NA
         new variable 'doi_article_prefix' (character) with 9 unique values and 0% NA
 mutate: new variable 'doi_suffix' (character) with 2,597 unique values and 0% NA
         new variable 'doi' (character) with 2,791 unique values and 0% NA
@@ -271,12 +271,12 @@ select: dropped 3 variables (first_chars, first_chars5, doi_suffix)
                        
                             aer aeri app jel mac mic pandp pol
                           0   0    0   0   0   0   0     1   0
-  AEA P&P                 1   0    0   0   0   0   0   549   0
-  AEJ:Applied Economics   0   0    0 342   0   0   0     0   0
+  AEA P&P                 1   0    0   0   0   0   0   550   0
+  AEJ:Applied Economics   0   0    0 343   0   0   0     0   0
   AEJ:Economic Policy     0   0    0   0   0   0   0     0 401
   AEJ:Macro               0   0    0   0   0 309   0     0   0
-  AEJ:Micro               0   0    0   0   0   0 175     1   0
-  AER                     4 635    0   1   0   0   0     0   0
+  AEJ:Micro               0   0    0   0   0   0 175     0   0
+  AER                     4 635    0   0   0   0   0     0   0
   AER:Insights            0   0  176   0   0   0   0     0   0
   JEL                     3   0    0   0  72   0   0     0   0
   JEP                   137   0    0   0   0   0   0     0   0
@@ -286,4 +286,4 @@ select: dropped 3 variables (first_chars, first_chars5, doi_suffix)
 > 
 > proc.time()
    user  system elapsed 
-  4.328   1.604   4.434 
+  4.614   1.453   4.528 

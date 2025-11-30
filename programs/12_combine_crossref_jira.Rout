@@ -188,12 +188,12 @@ summarize: now 17 rows and 3 columns, ungrouped
    Journal                 published_FALSE published_TRUE
    <chr>                             <int>          <int>
  1 ""                                    1              0
- 2 "AEA P&P"                           550              0
- 3 "AEJ:Applied Economics"              72            270
+ 2 "AEA P&P"                           551              0
+ 3 "AEJ:Applied Economics"              72            271
  4 "AEJ:Economic Policy"                60            341
  5 "AEJ:Macro"                          63            246
- 6 "AEJ:Micro"                          20            156
- 7 "AER"                                94            696
+ 6 "AEJ:Micro"                          19            156
+ 7 "AER"                                94            695
  8 "AER:Insights"                       21            155
  9 "JEL"                                56             19
 10 "JEP"                               137              0
@@ -211,4 +211,4 @@ summarize: now 17 rows and 3 columns, ungrouped
 > 
 > proc.time()
    user  system elapsed 
-  4.557   1.569   4.737 
+  4.397   1.698   4.614 
