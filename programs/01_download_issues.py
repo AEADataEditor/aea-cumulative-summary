@@ -105,7 +105,7 @@ def get_issues(jira, start_date, end_date, verbose=False, logger=None):
         print("Getting expected total count for comparison...")
         try:
             # Try to get count using enhanced_search_issues 
-            temp_issues = jira.enhanced_search_issues(base_jql.replace('ORDER BY createdDate DESC', ''))
+            temp_issues = jira.enhanced_search_issues(base_jql.replace('ORDER BY createdDate DESC', ''), maxResults=False)
             expected_count = len(temp_issues)
             print(f"Expected total issues (from enhanced_search_issues): {expected_count}")
         except Exception as e:
@@ -150,8 +150,8 @@ def get_issues(jira, start_date, end_date, verbose=False, logger=None):
             day_jql = f"project = AEAREP AND createdDate>='{day_str}' AND createdDate<'{next_day_str}' AND issuetype = Task ORDER BY createdDate DESC"
             
             try:
-                # Use enhanced_search_issues for this day
-                day_issues = jira.enhanced_search_issues(day_jql)
+                # Use enhanced_search_issues for this day (maxResults=False paginates through all results)
+                day_issues = jira.enhanced_search_issues(day_jql, maxResults=False)
                 if len(day_issues) > 0:
                     detail_msg = f"  Retrieved {len(day_issues)} issues on {day_str}"
                     log_and_print(detail_msg, verbose, logger)

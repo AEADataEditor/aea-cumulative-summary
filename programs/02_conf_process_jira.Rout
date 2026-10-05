@@ -17,8 +17,6 @@ Type 'demo()' for some demos, 'help()' for on-line help, or
 'help.start()' for an HTML browser interface to help.
 Type 'q()' to quit R.
 
-[Previously saved workspace restored]
-
 > # Anonymize JIRA process files and construct variables
 > # Harry Son, Lars Vilhuber, Linda Wang
 > # 2021-05-20
@@ -151,7 +149,7 @@ Loading required package: readr
  [9,] "readr"     "OK"   
 
 > remotes::install_github("ropensci/openalexR")
-Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"),echo=TRUE)
 
@@ -187,7 +185,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has no
 
 > download_crossref <- TRUE
 
-> extractday <- "2025-11-29"
+> extractday <- "2026-10-05"
 
 > firstpubday <- "2018-01-01"
 
@@ -347,56 +345,56 @@ Input found for confidential data - setting process_raw to TRUE
 +   print("Not processing anonymization due to global parameter.")
 + }
 rename: renamed one variable (ticket)
-mutate: new variable 'mc_number' (character) with 2,863 unique values and 0% NA
-mutate: changed 747 values (<1%) of 'mc_number' (0 new NAs)
-filter: removed 130 rows (<1%), 189,218 rows remaining
+mutate: new variable 'mc_number' (character) with 3,332 unique values and 0% NA
+mutate: changed 818 values (<1%) of 'mc_number' (0 new NAs)
+filter: removed 130 rows (<1%), 217,982 rows remaining
 filter: no rows removed
 select: dropped one variable (Key.1)
-filter: removed 3 rows (<1%), 189,215 rows remaining
-filter: removed 189,206 rows (>99%), 9 rows remaining
+filter: removed 3 rows (<1%), 217,979 rows remaining
+filter: removed 217,968 rows (>99%), 11 rows remaining
 select: dropped 15 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
-mutate: changed 2,142 values (>99%) of 'Sub.tasks' (0 new NAs)
+mutate: changed 3,069 values (>99%) of 'Sub.tasks' (0 new NAs)
 select: dropped one variable (Sub.tasks)
-distinct: removed 1,912 rows (89%), 239 rows remaining
+distinct: removed 2,800 rows (91%), 280 rows remaining
 Joining with `by = join_by(ticket)`
 anti_join: added no columns
-           > rows only in x             189,215
-           > rows only in placeholders (    239)
+           > rows only in x             217,979
+           > rows only in placeholders (    280)
            > matched rows              (      0)
            >                           =========
-           > rows total                 189,215
+           > rows total                 217,979
 select: dropped 13 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
-filter: removed 11,670 rows (6%), 177,545 rows remaining
+filter: removed 12,745 rows (6%), 205,234 rows remaining
 group_by: one grouping variable (ticket)
-filter (grouped): removed 173,391 rows (98%), 4,154 rows remaining (removed 0 groups, 4,154 groups remaining)
+filter (grouped): removed 200,512 rows (98%), 4,722 rows remaining (removed 0 groups, 4,722 groups remaining)
 ungroup: no grouping variables remain
-distinct: removed 1,295 rows (31%), 2,859 rows remaining
+distinct: removed 1,399 rows (30%), 3,323 rows remaining
 mutate: new variable 'rand' (double) with one unique value and 0% NA
-mutate: new variable 'mc_number_anon' (integer) with 2,859 unique values and 0% NA
+mutate: new variable 'mc_number_anon' (integer) with 3,323 unique values and 0% NA
 select: dropped one variable (rand)
 select: dropped 16 variables (RepositoryDOI, JournalIssueMonth, JournalIssueYear, Update.type, MCStatus, …)
-filter: removed 56,843 rows (30%), 132,372 rows remaining
+filter: removed 65,676 rows (30%), 152,303 rows remaining
 filter: no rows removed
-filter: removed 4,339 rows (3%), 128,033 rows remaining
-distinct: removed 127,823 rows (>99%), 210 rows remaining
+filter: removed 5,907 rows (4%), 146,396 rows remaining
+distinct: removed 146,142 rows (>99%), 254 rows remaining
 mutate: new variable 'rand' (double) with 2 unique values and 0% NA
-mutate: new variable 'assignee_anon' (integer) with 210 unique values and 0% NA
+mutate: new variable 'assignee_anon' (integer) with 254 unique values and 0% NA
 select: dropped one variable (rand)
 select: dropped one variable (Journal)
 left_join: added one column (mc_number_anon)
-           > rows only in x                           12,360
+           > rows only in x                           13,537
            > rows only in jira.manuscripts %>% se.. (      0)
-           > matched rows                            177,757    (includes duplicates)
+           > matched rows                            205,516    (includes duplicates)
            >                                        =========
-           > rows total                              190,117
+           > rows total                              219,053
 left_join: added one column (assignee_anon)
-           > rows only in x                61,267
+           > rows only in x                71,706
            > rows only in jira.assignees (      0)
-           > matched rows                 128,850
+           > matched rows                 147,347
            >                             =========
-           > rows total                   190,117
-mutate: new variable 'date_created' (Date) with 1,384 unique values and 0% NA
-        new variable 'date_asof' (Date) with 2,319 unique values and 0% NA
+           > rows total                   219,053
+mutate: new variable 'date_created' (Date) with 1,557 unique values and 0% NA
+        new variable 'date_asof' (Date) with 2,616 unique values and 0% NA
 rename: renamed one variable (subtask)
 mutate: new variable 'has_subtask' (character) with 2 unique values and 0% NA
 select: dropped 3 variables (Assignee, Created, As.Of.Date)
@@ -409,4 +407,4 @@ save it in /home/rstudio/aea-cumulative-summary/data/metadatawith the same name,
 > 
 > proc.time()
    user  system elapsed 
-  7.887   1.652   8.102 
+  7.937   0.778   8.180 

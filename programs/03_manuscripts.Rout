@@ -147,7 +147,7 @@ Loading required package: readr
  [9,] "readr"     "OK"   
 
 > remotes::install_github("ropensci/openalexR")
-Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"),echo=TRUE)
 
@@ -183,7 +183,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has no
 
 > download_crossref <- TRUE
 
-> extractday <- "2025-11-29"
+> extractday <- "2026-10-05"
 
 > firstpubday <- "2018-01-01"
 
@@ -256,34 +256,34 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has no
 +                            paste(doi_article_prefix,doi_suffix,sep="."),
 +                            sep="/")) %>%
 +        select(mc_number,mc_number_anon,doi,Journal,doi_article_prefix)
-mutate: new variable 'first_chars' (character) with 11 unique values and 0% NA
-filter: removed 52 rows (2%), 2,807 rows remaining
+mutate: new variable 'first_chars' (character) with 14 unique values and 0% NA
+filter: removed 59 rows (2%), 3,264 rows remaining
 filter: no rows removed
 filter: no rows removed
-mutate: changed 2,807 values (100%) of 'first_chars' (0 new NAs)
+mutate: changed 3,264 values (100%) of 'first_chars' (0 new NAs)
         new variable 'first_chars5' (character) with 16 unique values and 0% NA
         new variable 'doi_article_prefix' (character) with 9 unique values and 0% NA
-mutate: new variable 'doi_suffix' (character) with 2,597 unique values and 0% NA
-        new variable 'doi' (character) with 2,791 unique values and 0% NA
+mutate: new variable 'doi_suffix' (character) with 3,014 unique values and 0% NA
+        new variable 'doi' (character) with 3,244 unique values and 0% NA
 select: dropped 3 variables (first_chars, first_chars5, doi_suffix)
 > 
 > table(jira.manuscript.dois$Journal,jira.manuscript.dois$doi_article_prefix)
                        
                             aer aeri app jel mac mic pandp pol
-                          0   0    0   0   0   0   0     1   0
-  AEA P&P                 1   0    0   0   0   0   0   550   0
-  AEJ:Applied Economics   0   0    0 343   0   0   0     0   0
-  AEJ:Economic Policy     0   0    0   0   0   0   0     0 401
-  AEJ:Macro               0   0    0   0   0 309   0     0   0
-  AEJ:Micro               0   0    0   0   0   0 175     0   0
-  AER                     4 635    0   0   0   0   0     0   0
-  AER:Insights            0   0  176   0   0   0   0     0   0
-  JEL                     3   0    0   0  72   0   0     0   0
-  JEP                   137   0    0   0   0   0   0     0   0
+                          0   0    1   0   0   0   0     1   0
+  AEA P&P                 1   0    0   0   0   0   0   672   0
+  AEJ:Applied Economics   0   0    0 383   0   0   0     0   0
+  AEJ:Economic Policy     0   0    0   0   0   0   0     0 468
+  AEJ:Macro               0   0    0   0   0 363   0     0   0
+  AEJ:Micro               0   0    0   0   0   0 196     0   0
+  AER                     4 738    0   0   0   0   0     0   0
+  AER:Insights            0   0  199   0   0   0   0     0   0
+  JEL                     3   0    0   0  85   0   0     0   0
+  JEP                   150   0    0   0   0   0   0     0   0
 > 
 > saveRDS(jira.manuscript.dois,file=file.path(jiraconf,"manuscript-dois.lookup.Rds"))
 > 
 > 
 > proc.time()
    user  system elapsed 
-  4.614   1.453   4.528 
+  5.686   0.691   5.602 

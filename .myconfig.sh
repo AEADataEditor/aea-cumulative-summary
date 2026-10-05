@@ -1,5 +1,6 @@
-repo=tidyverse
-space=rocker
+# custom image built from ./Dockerfile via ./build.sh (tag)
+repo=aea-cumulative-summary
+space=larsvilhuber
 dockerrepo=$(echo $space/$repo | tr [A-Z] [a-z] | sed 's/-internal//')
 case $USER in
   vilhuber)
@@ -10,4 +11,4 @@ case $USER in
   WORKSPACE=/workspaces
   ;;
 esac
-tag=4.4.2
+tag=2026-10-03

@@ -7,3 +7,5 @@ interwrk
 confidential-config.R
 venv310
 issues.json
+logs
+complete_count_query_results_*.csv

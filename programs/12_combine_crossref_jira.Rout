@@ -80,7 +80,7 @@ The following object is masked from ‘package:stats’:
     filter
 
 Loading required package: readr
-Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"), echo=FALSE)
 > 
@@ -91,7 +91,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has no
 > # clean read-back
 > aeadois <- readRDS(file= doi.file.Rds)
 > nrow(aeadois)
-[1] 8341
+[1] 9013
 > 
 > # subset to the years in-scope: 2019+
 > aeadois %>%
@@ -99,8 +99,8 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has no
 +   filter(year >= firstpubyear ) %>%
 +   filter(published.print >= firstpubday)  %>% 
 +   mutate(match=TRUE)-> aeadois.subset 
-mutate: new variable 'year' (character) with 26 unique values and 0% NA
-filter: removed 5,263 rows (63%), 3,078 rows remaining
+mutate: new variable 'year' (character) with 27 unique values and 0% NA
+filter: removed 5,794 rows (64%), 3,219 rows remaining
 filter: no rows removed
 mutate: new variable 'match' (logical) with one unique value and 0% NA
 > 
@@ -110,7 +110,7 @@ mutate: new variable 'match' (logical) with one unique value and 0% NA
 > jira.manuscript.dois <- readRDS(file=file.path(jiraconf,"manuscript-dois.lookup.Rds")) 
 > 
 > nrow(jira.manuscript.dois)
-[1] 2807
+[1] 3264
 > 
 > # test: match to complete sample by DOI, should be no missing (complete_rate = 1)
 > 
@@ -118,11 +118,11 @@ mutate: new variable 'match' (logical) with one unique value and 0% NA
 +                                aeadois.subset,by=c("doi"="doi")) %>%
 +                      mutate(published = if_else(is.na(match),FALSE,TRUE))
 left_join: added 9 columns (container.title, published.print, issue, title, volume, …)
-           > rows only in jira.manuscript.dois  1,074
-           > rows only in aeadois.subset       (1,204)
-           > matched rows                       1,883    (includes duplicates)
+           > rows only in jira.manuscript.dois  1,357
+           > rows only in aeadois.subset       (1,323)
+           > matched rows                       1,907
            >                                   =======
-           > rows total                         2,957
+           > rows total                         3,264
 mutate: new variable 'published' (logical) with 2 unique values and 0% NA
 > 
 > # get the Journal -> MC prefix  back
@@ -159,21 +159,21 @@ select: dropped one variable (doi_article_prefix)
 +                                     str_sub(doi, start=-8, end=-5),"-",
 +                                     str_sub(doi, start=-4)))
 right_join: added 9 columns (container.title, published.print, issue, title, volume, …)
-            > rows only in jira.manuscript.dois (1,074)
-            > rows only in aeadois.subset        1,204
-            > matched rows                       1,883    (includes duplicates)
+            > rows only in jira.manuscript.dois (1,357)
+            > rows only in aeadois.subset        1,323
+            > matched rows                       1,907    (includes duplicates)
             >                                   =======
-            > rows total                         3,087
-filter: removed 1,883 rows (61%), 1,204 rows remaining
-mutate: changed 1,204 values (100%) of 'Journal' (1,204 fewer NAs)
-mutate: changed 436 values (36%) of 'Journal' (0 new NAs)
+            > rows total                         3,230
+filter: removed 1,907 rows (59%), 1,323 rows remaining
+mutate: changed 1,323 values (100%) of 'Journal' (1,323 fewer NAs)
+mutate: changed 464 values (35%) of 'Journal' (0 new NAs)
 left_join: added one column (mc_prefix)
            > rows only in x                   0
            > rows only in journal.abbrev (    1)
-           > matched rows                 1,204
+           > matched rows                 1,323
            >                             =======
-           > rows total                   1,204
-mutate: changed 1,204 values (100%) of 'mc_number' (1,204 fewer NAs)
+           > rows total                   1,323
+mutate: changed 1,323 values (100%) of 'mc_number' (1,323 fewer NAs)
 > 
 > 
 > # Who are these?
@@ -183,20 +183,20 @@ mutate: changed 1,204 values (100%) of 'mc_number' (1,204 fewer NAs)
 +   summarize(count = n(), .groups = "drop") %>%
 +   tidyr::pivot_wider(names_from = published, values_from = count, values_fill = 0, names_prefix = "published_")
 group_by: 2 grouping variables (Journal, published)
-summarize: now 17 rows and 3 columns, ungrouped
+summarize: now 18 rows and 3 columns, ungrouped
 # A tibble: 10 × 3
    Journal                 published_FALSE published_TRUE
    <chr>                             <int>          <int>
- 1 ""                                    1              0
- 2 "AEA P&P"                           551              0
- 3 "AEJ:Applied Economics"              72            271
- 4 "AEJ:Economic Policy"                60            341
- 5 "AEJ:Macro"                          63            246
- 6 "AEJ:Micro"                          19            156
- 7 "AER"                                94            695
- 8 "AER:Insights"                       21            155
- 9 "JEL"                                56             19
-10 "JEP"                               137              0
+ 1 ""                                    1              1
+ 2 "AEA P&P"                           673              0
+ 3 "AEJ:Applied Economics"              67            316
+ 4 "AEJ:Economic Policy"                84            384
+ 5 "AEJ:Macro"                          63            300
+ 6 "AEJ:Micro"                          26            170
+ 7 "AER"                               209            533
+ 8 "AER:Insights"                       25            174
+ 9 "JEL"                                59             29
+10 "JEP"                               150              0
 > 
 > ## Save files
 > 
@@ -211,4 +211,4 @@ summarize: now 17 rows and 3 columns, ungrouped
 > 
 > proc.time()
    user  system elapsed 
-  4.397   1.698   4.614 
+  7.193   0.732   7.449 

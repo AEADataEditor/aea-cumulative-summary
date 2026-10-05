@@ -26,8 +26,16 @@ Using Krantz data, relate the software, and complexity/size of the repository, t
 
 # NOTES
 
-## Running R on Codespaces
+## Running in Docker
+
+The `Dockerfile` extends `rocker/tidyverse` with Python (for the Jira download) and runs the project's own package initialization (`global-libraries.R`, `programs/libraries.R`, `rmd-libraries.R`). The image and tag are set in `.myconfig.sh`.
 
 ```bash
-docker run -it --rm -v $(pwd):/project -w /project rocker/verse /bin/bash
+bash build.sh 2026-10-03       # build larsvilhuber/aea-cumulative-summary:2026-10-03
+# JIRA_USERNAME and JIRA_API_KEY must be set in the host environment
+DOCKEREXTRA="--user $(id -u):$(id -g)" bash run_docker.sh 2026-10-03 -c \
+  'cd /home/rstudio/aea-cumulative-summary/programs && python 01_download_issues.py -s 2018-01-01 -e YYYY-MM-DD'
+# then set extractday in programs/config.R to the date of the extract, and run
+DOCKEREXTRA="--user $(id -u):$(id -g)" bash run_docker.sh 2026-10-03 -c \
+  'cd /home/rstudio/aea-cumulative-summary/programs && bash main.sh'
 ```

@@ -77,7 +77,7 @@ The following object is masked from ‘package:stats’:
     filter
 
 Loading required package: readr
-Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"), echo=FALSE)
 > 
@@ -101,12 +101,12 @@ filter: no rows removed
 +   select(given,family) %>%
 +   distinct(given,family) %>%
 +   arrange(family,given)
-select: dropped 6 variables (sequence, affiliation.name, suffix, ORCID, authenticated.orcid, …)
-distinct: removed 1,440 rows (28%), 3,631 rows remaining
+select: dropped 9 variables (sequence, affiliation.name, role.vocabulary, role.role, suffix, …)
+distinct: removed 1,147 rows (22%), 3,967 rows remaining
 > 
 > unique_authors_published <- nrow(unique_authors)
 > articles_published <- jira.plus.authors %>% filter(!is.na(container.title)) %>% nrow()
-filter: removed 1,074 rows (36%), 1,883 rows remaining
+filter: removed 1,357 rows (42%), 1,907 rows remaining
 > avg_unique_authors_per_article <- unique_authors_published / articles_published
 > 
 > author_per_article <- authorlist.aea.df %>%
@@ -114,9 +114,9 @@ filter: removed 1,074 rows (36%), 1,883 rows remaining
 +   group_by(doi) %>%
 +   summarize(num_authors=n()) %>%
 +   ungroup()
-select: dropped 5 variables (sequence, affiliation.name, suffix, ORCID, authenticated.orcid)
+select: dropped 8 variables (sequence, affiliation.name, role.vocabulary, role.role, suffix, …)
 group_by: one grouping variable (doi)
-summarize: now 1,724 rows and 2 columns, ungrouped
+summarize: now 1,896 rows and 2 columns, ungrouped
 ungroup: no grouping variables remain
 >   
 > 
@@ -130,12 +130,12 @@ summarize: now one row and one column, ungrouped
 +   # remove the JEP and P&P
 +   filter(doi_article_prefix %in% c("","pandp","jep")) %>%
 +   nrow()
-filter: removed 1,883 rows (64%), 1,074 rows remaining
-filter: removed 378 rows (35%), 696 rows remaining
+filter: removed 1,907 rows (58%), 1,357 rows remaining
+filter: removed 526 rows (39%), 831 rows remaining
 > 
 > articles_not_published * avg_unique_authors_per_article
-[1] 1342.101
+[1] 1728.672
 > 
 > proc.time()
    user  system elapsed 
-  4.052   1.605   4.118 
+  5.787   0.676   5.767 

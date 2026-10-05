@@ -151,7 +151,7 @@ Loading required package: readr
  [9,] "readr"     "OK"   
 
 > remotes::install_github("ropensci/openalexR")
-Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has not changed since last install.
+Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has not changed since last install.
   Use `force = TRUE` to force installation
 > source(file.path(programs,"config.R"),echo=TRUE)
 
@@ -187,7 +187,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has no
 
 > download_crossref <- TRUE
 
-> extractday <- "2025-11-29"
+> extractday <- "2026-10-05"
 
 > firstpubday <- "2018-01-01"
 
@@ -222,20 +222,16 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (d193d5f7) has no
 > jira.anon.csv <- file.path(jiraanon, paste0(jira.anon.base, 
 +     ".csv"))
 > 
-> exclusions <- c("Lars Vilhuber","Michael Darisse","Sofia Encarnacion", "Linda Wang",
-+                 "Leonel Borja Plaza","User ","Takshil Sachdev","Jenna Kutz Farabaugh",
-+                 "LV (Data Editor)","Ilanith Nizard","Julia Hewitt")
+> # This maps Jira assignees to names, and records each person's role:
+> # undergraduate, graduate, pre-doc, staff, other (non-person accounts).
+> # Assignees not listed are treated as undergraduates.
+> # Graduate students not in Jira can be added with Assignee = Name.
 > 
-> # This contains unmapped IDs that need to be cleaned up
+> roles <- c("undergraduate","graduate","pre-doc","staff","other")
 > 
-> lookup <- read_csv(file.path(jirameta,"assignee-name-lookup.csv"))
-Rows: 9 Columns: 2
-── Column specification ────────────────────────────────────────────────────────
-Delimiter: ","
-chr (2): Assignee, Name
-
-ℹ Use `spec()` to retrieve the full column specification for this data.
-ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+> lookup <- read_csv(file.path(jirameta,"assignee-name-lookup.csv"),
++                    col_types = cols(.default = col_character()),
++                    trim_ws = FALSE)
 > removal <- read_csv(file.path(jirameta,"assignee-remove.csv"))
 Rows: 2 Columns: 1
 ── Column specification ────────────────────────────────────────────────────────
@@ -245,33 +241,52 @@ chr (1): Assignee
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
 > 
+> bad.roles <- lookup %>% filter(is.na(Role) | !Role %in% roles)
+filter: removed all rows (100%)
+> if (nrow(bad.roles) > 0) {
++   stop(paste0("Missing or invalid Role in assignee-name-lookup.csv for: ",
++               paste(bad.roles$Name, collapse = ", "),
++               "\nValid roles: ", paste(roles, collapse = ", ")))
++ }
+> 
 > jira.assignees <- readRDS(file=assignee.lookup.rds)
 > 
-> lab.member <- jira.assignees %>%
+> # Undergraduates come from Jira (unlisted assignees default to undergraduate),
+> # everybody else from the lookup. Non-person accounts (Role "other") are dropped.
+> lab.undergrads <- jira.assignees %>%
 +   #filter(date_created >= firstday, date_created < lastday) %>%
 +   filter(Assignee != "") %>%
-+   filter(!Assignee %in% exclusions) %>%
 +   left_join(lookup) %>%
++   filter(is.na(Role) | Role == "undergraduate") %>%
 +   anti_join(removal) %>%
-+   mutate(Assignee = if_else(is.na(Name),Assignee,Name)) %>%
-+   distinct(Assignee) 
++   mutate(Name = if_else(is.na(Name),Assignee,Name),
++          Role = "undergraduate") %>%
++   distinct(Name,Role)
 filter: no rows removed
-filter: removed 9 rows (4%), 201 rows remaining
 Joining with `by = join_by(Assignee)`
-left_join: added one column (Name)
-           > rows only in x       194
-           > rows only in lookup (  2)
-           > matched rows           7
+left_join: added 2 columns (Name, Role)
+           > rows only in x       231
+           > rows only in lookup (  4)
+           > matched rows          23
            >                     =====
-           > rows total           201
+           > rows total           254
+filter: removed 15 rows (6%), 239 rows remaining
 Joining with `by = join_by(Assignee)`
 anti_join: added no columns
-           > rows only in x        201
+           > rows only in x        239
            > rows only in removal (  2)
            > matched rows         (  0)
            >                      =====
-           > rows total            201
-mutate: changed 7 values (3%) of 'Assignee' (0 new NAs)
+           > rows total            239
+mutate: changed 231 values (97%) of 'Name' (231 fewer NAs)
+        changed 231 values (97%) of 'Role' (231 fewer NAs)
+distinct: no rows removed
+> 
+> lab.member <- lookup %>%
++   filter(!Role %in% c("undergraduate","other")) %>%
++   distinct(Name,Role) %>%
++   bind_rows(lab.undergrads,.)
+filter: removed 12 rows (44%), 15 rows remaining
 distinct: no rows removed
 > 
 > write.table(lab.member, file = file.path(Outputs,"replicationlab_members.txt"), sep = "\t",
@@ -283,4 +298,4 @@ distinct: no rows removed
 > 
 > proc.time()
    user  system elapsed 
-  4.291   1.582   4.352 
+  3.787   0.710   3.730 
