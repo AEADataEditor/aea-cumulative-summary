@@ -91,7 +91,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has no
 > # clean read-back
 > aeadois <- readRDS(file= doi.file.Rds)
 > nrow(aeadois)
-[1] 9013
+[1] 11895
 > 
 > # subset to the years in-scope: 2019+
 > aeadois %>%
@@ -100,7 +100,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has no
 +   filter(published.print >= firstpubday)  %>% 
 +   mutate(match=TRUE)-> aeadois.subset 
 mutate: new variable 'year' (character) with 27 unique values and 0% NA
-filter: removed 5,794 rows (64%), 3,219 rows remaining
+filter: removed 7,854 rows (66%), 4,041 rows remaining
 filter: no rows removed
 mutate: new variable 'match' (logical) with one unique value and 0% NA
 > 
@@ -118,9 +118,9 @@ mutate: new variable 'match' (logical) with one unique value and 0% NA
 +                                aeadois.subset,by=c("doi"="doi")) %>%
 +                      mutate(published = if_else(is.na(match),FALSE,TRUE))
 left_join: added 9 columns (container.title, published.print, issue, title, volume, …)
-           > rows only in jira.manuscript.dois  1,357
-           > rows only in aeadois.subset       (1,323)
-           > matched rows                       1,907
+           > rows only in jira.manuscript.dois  1,183
+           > rows only in aeadois.subset       (1,975)
+           > matched rows                       2,081
            >                                   =======
            > rows total                         3,264
 mutate: new variable 'published' (logical) with 2 unique values and 0% NA
@@ -159,21 +159,21 @@ select: dropped one variable (doi_article_prefix)
 +                                     str_sub(doi, start=-8, end=-5),"-",
 +                                     str_sub(doi, start=-4)))
 right_join: added 9 columns (container.title, published.print, issue, title, volume, …)
-            > rows only in jira.manuscript.dois (1,357)
-            > rows only in aeadois.subset        1,323
-            > matched rows                       1,907    (includes duplicates)
+            > rows only in jira.manuscript.dois (1,183)
+            > rows only in aeadois.subset        1,975
+            > matched rows                       2,081    (includes duplicates)
             >                                   =======
-            > rows total                         3,230
-filter: removed 1,907 rows (59%), 1,323 rows remaining
-mutate: changed 1,323 values (100%) of 'Journal' (1,323 fewer NAs)
-mutate: changed 464 values (35%) of 'Journal' (0 new NAs)
+            > rows total                         4,056
+filter: removed 2,081 rows (51%), 1,975 rows remaining
+mutate: changed 1,975 values (100%) of 'Journal' (1,975 fewer NAs)
+mutate: changed 464 values (23%) of 'Journal' (0 new NAs)
 left_join: added one column (mc_prefix)
            > rows only in x                   0
            > rows only in journal.abbrev (    1)
-           > matched rows                 1,323
+           > matched rows                 1,975
            >                             =======
-           > rows total                   1,323
-mutate: changed 1,323 values (100%) of 'mc_number' (1,323 fewer NAs)
+           > rows total                   1,975
+mutate: changed 1,975 values (100%) of 'mc_number' (1,975 fewer NAs)
 > 
 > 
 > # Who are these?
@@ -193,9 +193,9 @@ summarize: now 18 rows and 3 columns, ungrouped
  4 "AEJ:Economic Policy"                84            384
  5 "AEJ:Macro"                          63            300
  6 "AEJ:Micro"                          26            170
- 7 "AER"                               209            533
+ 7 "AER"                                82            660
  8 "AER:Insights"                       25            174
- 9 "JEL"                                59             29
+ 9 "JEL"                                12             76
 10 "JEP"                               150              0
 > 
 > ## Save files
@@ -211,4 +211,4 @@ summarize: now 18 rows and 3 columns, ungrouped
 > 
 > proc.time()
    user  system elapsed 
-  7.193   0.732   7.449 
+  4.292   0.810   4.409 

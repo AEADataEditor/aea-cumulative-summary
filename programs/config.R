@@ -42,7 +42,7 @@ download_crossref <- TRUE
 
 ## This pins the date of the to-be-processed file
 
-extractday <- "2026-10-05"
+extractday <- "2026-10-07"
 firstpubday <- "2018-01-01"
 firstpubyear <- substr(firstpubday,1,4)
 

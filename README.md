@@ -1,5 +1,14 @@
 # Get demographics
 
+## TL;DR
+
+In order to run this top to bottom, do this:
+
+```
+bash ./main.sh
+```
+
+
 ## Step 0: Prep
 
 - needs API key for Jira and possibly Box (to store confidential data)

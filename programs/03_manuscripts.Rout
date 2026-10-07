@@ -183,7 +183,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has no
 
 > download_crossref <- TRUE
 
-> extractday <- "2026-10-05"
+> extractday <- "2026-10-07"
 
 > firstpubday <- "2018-01-01"
 
@@ -286,4 +286,4 @@ select: dropped 3 variables (first_chars, first_chars5, doi_suffix)
 > 
 > proc.time()
    user  system elapsed 
-  5.686   0.691   5.602 
+  4.264   0.792   4.127 

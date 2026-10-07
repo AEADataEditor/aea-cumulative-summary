@@ -1,7 +1,7 @@
 ---
 title: "Impacts of the AEA Verification Process"
 author: "Lars Vilhuber"
-date: "October 05, 2026"
+date: "October 07, 2026"
 output:
   html_document:
     toc: true
@@ -46,10 +46,10 @@ Each round of the manuscript evaluation generates a report. Most papers do no mo
 
 
 
-## 5696 Authors Reached 
+## 5936 Authors Reached 
 
 
-Of the approximately **3244 manuscripts**, **1896 manuscripts have been published**. This excludes articles in the JEP[^whypub] and the Papers and Proceedings, which I don't track for this report.[^whypandp]
+Of the approximately **3244 manuscripts**, **2066 manuscripts have been published**. This excludes articles in the JEP[^whypub] and the Papers and Proceedings, which I don't track for this report.[^whypandp]
 
 For the articles that have been published, I can identify the number of authors associated with these papers, and infer the total number of authors for those articles not tracked or not yet published. Naturally, I cannot assume that every author of the manuscript will have read the Data Editor's reports, and in that sense, this is an over-estimate of the extent of the impact of the reports. On the other hand, many of the authors have research assistants, tasked with preparing the replication package in the first place, and adjusting it based on the report. In this other sense, the numbers here are an underestimate of both the short-term as well as the long-term impact. Each report is formulated to help authors (and RAs) to improve their ability to publish transparent and credible research.
 
@@ -58,8 +58,8 @@ For the articles that have been published, I can identify the number of authors 
 
 [^whypandp]: Papers and Proceedings receive a much more cursory review.
 
-- Authors associated with published and reviewed papers: **3967**, or about 2.1 authors per published article.
-- Estimate of overall authors reached (including the 831 articles not yet published): **5696**
+- Authors associated with published and reviewed papers: **4242**, or about 2 authors per published article.
+- Estimate of overall authors reached (including the 831 articles not yet published): **5936**
 
 
 

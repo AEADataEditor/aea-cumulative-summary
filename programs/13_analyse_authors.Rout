@@ -102,11 +102,11 @@ filter: no rows removed
 +   distinct(given,family) %>%
 +   arrange(family,given)
 select: dropped 9 variables (sequence, affiliation.name, role.vocabulary, role.role, suffix, …)
-distinct: removed 1,147 rows (22%), 3,967 rows remaining
+distinct: removed 1,344 rows (24%), 4,242 rows remaining
 > 
 > unique_authors_published <- nrow(unique_authors)
 > articles_published <- jira.plus.authors %>% filter(!is.na(container.title)) %>% nrow()
-filter: removed 1,357 rows (42%), 1,907 rows remaining
+filter: removed 1,183 rows (36%), 2,081 rows remaining
 > avg_unique_authors_per_article <- unique_authors_published / articles_published
 > 
 > author_per_article <- authorlist.aea.df %>%
@@ -116,7 +116,7 @@ filter: removed 1,357 rows (42%), 1,907 rows remaining
 +   ungroup()
 select: dropped 8 variables (sequence, affiliation.name, role.vocabulary, role.role, suffix, …)
 group_by: one grouping variable (doi)
-summarize: now 1,896 rows and 2 columns, ungrouped
+summarize: now 2,066 rows and 2 columns, ungrouped
 ungroup: no grouping variables remain
 >   
 > 
@@ -130,12 +130,12 @@ summarize: now one row and one column, ungrouped
 +   # remove the JEP and P&P
 +   filter(doi_article_prefix %in% c("","pandp","jep")) %>%
 +   nrow()
-filter: removed 1,907 rows (58%), 1,357 rows remaining
-filter: removed 526 rows (39%), 831 rows remaining
+filter: removed 2,081 rows (64%), 1,183 rows remaining
+filter: removed 352 rows (30%), 831 rows remaining
 > 
 > articles_not_published * avg_unique_authors_per_article
-[1] 1728.672
+[1] 1693.946
 > 
 > proc.time()
    user  system elapsed 
-  5.787   0.676   5.767 
+  3.844   0.690   3.848 
