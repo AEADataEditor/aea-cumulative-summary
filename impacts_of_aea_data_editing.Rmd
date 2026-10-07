@@ -60,9 +60,6 @@ jira.conf.plus %>% filter(!is.na(Journal)) %>%
 crossref.only <- readRDS(file=file.path(Outputs,"crossref_only.Rds"))
 jira.plus.authors <- readRDS(file=file.path(interwrk,"jira_plus_authors.Rds"))
 
-jira.plus.authors %>%
-  filter(published) %>%
-  distinct(doi) %>% nrow() -> published_manuscripts
 
 ```
 
@@ -71,23 +68,24 @@ jira.plus.authors %>%
 
 ```{r authors,include=FALSE}
 source(file.path(programs,"13_analyse_authors.R"),echo=TRUE)
-estimate_authors <- round(articles_not_published * avg_unique_authors_per_article,0) + unique_authors_published
+articles_pandp <- stats.pandp$articles_published + stats.pandp$articles_not_published
 ```
 
-## `r estimate_authors` Authors Reached 
+## `r stats.main$estimate_authors` Authors Reached 
 
 
-Of the approximately **`r unique_manuscripts` manuscripts**, **`r published_manuscripts` manuscripts have been published**. This excludes articles in the JEP[^whypub] and the Papers and Proceedings, which I don't track for this report.[^whypandp]
+Of the approximately **`r unique_manuscripts` manuscripts**, `r articles_pandp` are articles in the Papers and Proceedings, which receive a different report.[^whypandp] Of the remaining manuscripts, **`r stats.main$articles_published` manuscripts have been published**. This count does not include the `r stats.main$articles_jep` articles in the JEP, which I cannot track.[^whypub]
 
-For the articles that have been published, I can identify the number of authors associated with these papers, and infer the total number of authors for those articles not tracked or not yet published. Naturally, I cannot assume that every author of the manuscript will have read the Data Editor's reports, and in that sense, this is an over-estimate of the extent of the impact of the reports. On the other hand, many of the authors have research assistants, tasked with preparing the replication package in the first place, and adjusting it based on the report. In this other sense, the numbers here are an underestimate of both the short-term as well as the long-term impact. Each report is formulated to help authors (and RAs) to improve their ability to publish transparent and credible research.
+For the articles that have been published, I can identify the number of authors associated with these papers, and infer the total number of authors for those articles not tracked (JEP) or not yet published, using the average number of authors per published article. Naturally, I cannot assume that every author of the manuscript will have read the Data Editor's reports, and in that sense, this is an over-estimate of the extent of the impact of the reports. On the other hand, many of the authors have research assistants, tasked with preparing the replication package in the first place, and adjusting it based on the report. In this other sense, the numbers here are an underestimate of both the short-term as well as the long-term impact. Each report is formulated to help authors (and RAs) to improve their ability to publish transparent and credible research.
 
 
-[^whypub]: I cannot track papers in the Journal of Economic Perspective, since our internal database only tracks manuscript numbers, which are cannot be simply mapped into DOIs. The LDI Replication Lab's database does not track the actual DOI of the published manuscript, as that is handled by the AEA's editorial office.
+[^whypub]: I cannot track papers in the Journal of Economic Perspectives, since our internal database only tracks manuscript numbers, which cannot be simply mapped into DOIs. The LDI Replication Lab's database does not track the actual DOI of the published manuscript, as that is handled by the AEA's editorial office.
 
-[^whypandp]: Papers and Proceedings receive a much more cursory review.
+[^whypandp]: Papers and Proceedings receive a much more cursory review, and their authors are counted separately below.
 
-- Authors associated with published and reviewed papers: **`r unique_authors_published`**, or about `r round(avg_unique_authors_per_article,1)` authors per published article.
-- Estimate of overall authors reached (including the `r articles_not_published` articles not yet published): **`r estimate_authors`**
+- Unique authors of published and reviewed papers: **`r stats.main$unique_authors`**, with on average `r round(stats.main$avg_author_per_article,1)` authors per published article.
+- Estimate of overall authors reached (including the `r stats.main$articles_jep` JEP articles and the `r stats.main$articles_not_published` articles not yet published): **`r stats.main$estimate_authors`**
+- Authors of P&P reached: **`r stats.pandp$estimate_authors`** (`r stats.pandp$unique_authors` unique authors of `r stats.pandp$articles_published` published P&P articles, with on average `r round(stats.pandp$avg_author_per_article,1)` authors per article, plus an estimate for the `r stats.pandp$articles_not_published` P&P articles not matched to a published article)
 
 
 ```{r undergrads}

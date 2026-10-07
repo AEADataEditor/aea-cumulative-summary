@@ -15,7 +15,7 @@ library(rcrossref)
 
 # Each journal has a ISSN
 if (!file.exists(issns.file)) {
-  issns <- data.frame(matrix(ncol=3,nrow=11))
+  issns <- data.frame(matrix(ncol=3,nrow=13))
   names(issns) <- c("journal","issn","lastdate")
   tmp.date <- c("2000-01")
 # Print ISSNs are needed for AER, JEL, JEP: some works carry only the print ISSN.
@@ -31,6 +31,8 @@ issns[8,] <- c("Journal of Economic Literature","0022-0515",tmp.date)  # print I
 issns[9,] <- c("Journal of Economic Perspectives","1944-7965",tmp.date)
 issns[10,] <- c("Journal of Economic Perspectives","0895-3309",tmp.date)  # print ISSN is needed!
 issns[11,] <- c("American Economic Review: Insights","2640-2068",tmp.date)
+issns[12,] <- c("AEA Papers and Proceedings","2574-0776",tmp.date)
+issns[13,] <- c("AEA Papers and Proceedings","2574-0768",tmp.date)  # print ISSN
 
   saveRDS(issns %>% filter(!is.na(journal)), file= issns.file)
 } else {

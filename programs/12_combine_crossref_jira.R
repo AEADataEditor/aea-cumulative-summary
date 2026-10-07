@@ -50,7 +50,8 @@ crossref.only <-right_join(jira.manuscript.dois,
                                                   "American Economic Review"="AER",
                                                   "Journal of Economic Literature"="JEL",
                                                   "Journal of Economic Perspectives"="JEP",
-                                                  "American Economic Review: Insights"="AER:Insights"))) %>%
+                                                  "American Economic Review: Insights"="AER:Insights",
+                                                  "AEA Papers and Proceedings"="AEA P&P"))) %>%
                   # one last fix
                   mutate(Journal = if_else(Journal=="AER: Insights","AER:Insights",Journal),
                          Journal = if_else(Journal=="AEJ:Macroeconomics","AEJ:Macro",Journal),

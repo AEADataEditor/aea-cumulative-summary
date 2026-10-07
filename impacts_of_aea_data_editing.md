@@ -46,20 +46,21 @@ Each round of the manuscript evaluation generates a report. Most papers do no mo
 
 
 
-## 5936 Authors Reached 
+## 5605 Authors Reached 
 
 
-Of the approximately **3244 manuscripts**, **2066 manuscripts have been published**. This excludes articles in the JEP[^whypub] and the Papers and Proceedings, which I don't track for this report.[^whypandp]
+Of the approximately **3244 manuscripts**, 670 are articles in the Papers and Proceedings, which receive a different report.[^whypandp] Of the remaining manuscripts, **2066 manuscripts have been published**. This count does not include the 150 articles in the JEP, which I cannot track.[^whypub]
 
-For the articles that have been published, I can identify the number of authors associated with these papers, and infer the total number of authors for those articles not tracked or not yet published. Naturally, I cannot assume that every author of the manuscript will have read the Data Editor's reports, and in that sense, this is an over-estimate of the extent of the impact of the reports. On the other hand, many of the authors have research assistants, tasked with preparing the replication package in the first place, and adjusting it based on the report. In this other sense, the numbers here are an underestimate of both the short-term as well as the long-term impact. Each report is formulated to help authors (and RAs) to improve their ability to publish transparent and credible research.
+For the articles that have been published, I can identify the number of authors associated with these papers, and infer the total number of authors for those articles not tracked (JEP) or not yet published, using the average number of authors per published article. Naturally, I cannot assume that every author of the manuscript will have read the Data Editor's reports, and in that sense, this is an over-estimate of the extent of the impact of the reports. On the other hand, many of the authors have research assistants, tasked with preparing the replication package in the first place, and adjusting it based on the report. In this other sense, the numbers here are an underestimate of both the short-term as well as the long-term impact. Each report is formulated to help authors (and RAs) to improve their ability to publish transparent and credible research.
 
 
-[^whypub]: I cannot track papers in the Journal of Economic Perspective, since our internal database only tracks manuscript numbers, which are cannot be simply mapped into DOIs. The LDI Replication Lab's database does not track the actual DOI of the published manuscript, as that is handled by the AEA's editorial office.
+[^whypub]: I cannot track papers in the Journal of Economic Perspectives, since our internal database only tracks manuscript numbers, which cannot be simply mapped into DOIs. The LDI Replication Lab's database does not track the actual DOI of the published manuscript, as that is handled by the AEA's editorial office.
 
-[^whypandp]: Papers and Proceedings receive a much more cursory review.
+[^whypandp]: Papers and Proceedings receive a much more cursory review, and their authors are counted separately below.
 
-- Authors associated with published and reviewed papers: **4242**, or about 2 authors per published article.
-- Estimate of overall authors reached (including the 831 articles not yet published): **5936**
+- Unique authors of published and reviewed papers: **4242**, with on average 2.7 authors per published article.
+- Estimate of overall authors reached (including the 150 JEP articles and the 358 articles not yet published): **5605**
+- Authors of P&P reached: **1809** (1790 unique authors of 664 published P&P articles, with on average 3.1 authors per article, plus an estimate for the 6 P&P articles not matched to a published article)
 
 
 

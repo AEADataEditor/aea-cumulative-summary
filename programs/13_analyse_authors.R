@@ -14,35 +14,39 @@ source(file.path(programs,"config.R"), echo=FALSE)
 #crossref.only <- readRDS(file=file.path(Outputs,"crossref_only.Rds"))
 jira.plus.authors <- readRDS(file=file.path(interwrk,"jira_plus_authors.Rds"))
 
-authorlist.aea.df <- jira.plus.authors %>%
-  select(author,doi) %>%
-  filter(!is.na(author)) %>%
-  tidyr::unnest(author) 
+# one row per manuscript (some DOIs appear more than once in Jira)
+# P&P receive a different, more cursory report, and are counted separately
+jira.articles <- jira.plus.authors %>%
+  distinct(doi, .keep_all = TRUE) %>%
+  mutate(pandp = doi_article_prefix == "pandp" | Journal == "AEA P&P")
 
-unique_authors <- authorlist.aea.df %>%
-  select(given,family) %>%
-  distinct(given,family) %>%
-  arrange(family,given)
+# Authors of published articles, and extrapolation to the articles
+# that cannot be matched to a published article (JEP, not yet published)
+author_stats <- function(articles) {
+  authorlist <- articles %>%
+    filter(published) %>%
+    select(author,doi) %>%
+    tidyr::unnest(author)
+  unique_authors <- authorlist %>%
+    distinct(given,family) %>%
+    nrow()
+  avg_author_per_article <- authorlist %>%
+    count(doi, name = "num_authors") %>%
+    pull(num_authors) %>%
+    mean()
+  articles_jep <- articles %>% filter(!published, Journal == "JEP") %>% nrow()
+  articles_not_published <- articles %>% filter(!published, Journal != "JEP") %>% nrow()
+  list(articles_published     = articles %>% filter(published) %>% nrow(),
+       unique_authors         = unique_authors,
+       avg_author_per_article = avg_author_per_article,
+       articles_jep           = articles_jep,
+       articles_not_published = articles_not_published,
+       estimate_authors       = unique_authors +
+         round((articles_jep + articles_not_published) * avg_author_per_article, 0))
+}
 
-unique_authors_published <- nrow(unique_authors)
-articles_published <- jira.plus.authors %>% filter(!is.na(container.title)) %>% nrow()
-avg_unique_authors_per_article <- unique_authors_published / articles_published
+stats.main  <- author_stats(jira.articles %>% filter(!pandp))
+stats.pandp <- author_stats(jira.articles %>% filter(pandp))
 
-author_per_article <- authorlist.aea.df %>%
-  select(given,family,doi) %>%
-  group_by(doi) %>%
-  summarize(num_authors=n()) %>%
-  ungroup()
-  
-
-avg_author_per_article <- author_per_article%>%
-  summarize(num_authors=sum(num_authors)/n())
-
-
-articles_not_published <- jira.plus.authors %>% 
-  filter(is.na(container.title)) %>% 
-  # remove the JEP and P&P
-  filter(doi_article_prefix %in% c("","pandp","jep")) %>%
-  nrow()
-
-articles_not_published * avg_unique_authors_per_article
+stats.main
+stats.pandp

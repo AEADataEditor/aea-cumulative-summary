@@ -90,52 +90,97 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has no
 > #crossref.only <- readRDS(file=file.path(Outputs,"crossref_only.Rds"))
 > jira.plus.authors <- readRDS(file=file.path(interwrk,"jira_plus_authors.Rds"))
 > 
-> authorlist.aea.df <- jira.plus.authors %>%
-+   select(author,doi) %>%
-+   filter(!is.na(author)) %>%
-+   tidyr::unnest(author) 
-select: dropped 13 variables (mc_number, mc_number_anon, Journal, doi_article_prefix, container.title, …)
-filter: no rows removed
+> # one row per manuscript (some DOIs appear more than once in Jira)
+> # P&P receive a different, more cursory report, and are counted separately
+> jira.articles <- jira.plus.authors %>%
++   distinct(doi, .keep_all = TRUE) %>%
++   mutate(pandp = doi_article_prefix == "pandp" | Journal == "AEA P&P")
+distinct: removed 20 rows (1%), 3,244 rows remaining
+mutate: new variable 'pandp' (logical) with 2 unique values and 0% NA
 > 
-> unique_authors <- authorlist.aea.df %>%
-+   select(given,family) %>%
-+   distinct(given,family) %>%
-+   arrange(family,given)
-select: dropped 9 variables (sequence, affiliation.name, role.vocabulary, role.role, suffix, …)
-distinct: removed 1,344 rows (24%), 4,242 rows remaining
+> # Authors of published articles, and extrapolation to the articles
+> # that cannot be matched to a published article (JEP, not yet published)
+> author_stats <- function(articles) {
++   authorlist <- articles %>%
++     filter(published) %>%
++     select(author,doi) %>%
++     tidyr::unnest(author)
++   unique_authors <- authorlist %>%
++     distinct(given,family) %>%
++     nrow()
++   avg_author_per_article <- authorlist %>%
++     count(doi, name = "num_authors") %>%
++     pull(num_authors) %>%
++     mean()
++   articles_jep <- articles %>% filter(!published, Journal == "JEP") %>% nrow()
++   articles_not_published <- articles %>% filter(!published, Journal != "JEP") %>% nrow()
++   list(articles_published     = articles %>% filter(published) %>% nrow(),
++        unique_authors         = unique_authors,
++        avg_author_per_article = avg_author_per_article,
++        articles_jep           = articles_jep,
++        articles_not_published = articles_not_published,
++        estimate_authors       = unique_authors +
++          round((articles_jep + articles_not_published) * avg_author_per_article, 0))
++ }
 > 
-> unique_authors_published <- nrow(unique_authors)
-> articles_published <- jira.plus.authors %>% filter(!is.na(container.title)) %>% nrow()
-filter: removed 1,183 rows (36%), 2,081 rows remaining
-> avg_unique_authors_per_article <- unique_authors_published / articles_published
+> stats.main  <- author_stats(jira.articles %>% filter(!pandp))
+filter: removed 670 rows (21%), 2,574 rows remaining
+filter: removed 508 rows (20%), 2,066 rows remaining
+select: dropped 14 variables (mc_number, mc_number_anon, Journal, doi_article_prefix, container.title, …)
+distinct: removed 1,300 rows (23%), 4,242 rows remaining
+count: now 2,066 rows and 2 columns, ungrouped
+filter: removed 2,424 rows (94%), 150 rows remaining
+filter: removed 2,216 rows (86%), 358 rows remaining
+filter: removed 508 rows (20%), 2,066 rows remaining
+> stats.pandp <- author_stats(jira.articles %>% filter(pandp))
+filter: removed 2,574 rows (79%), 670 rows remaining
+filter: removed 6 rows (1%), 664 rows remaining
+select: dropped 14 variables (mc_number, mc_number_anon, Journal, doi_article_prefix, container.title, …)
+distinct: removed 299 rows (14%), 1,790 rows remaining
+count: now 664 rows and 2 columns, ungrouped
+filter: removed all rows (100%)
+filter: removed 664 rows (99%), 6 rows remaining
+filter: removed 6 rows (1%), 664 rows remaining
 > 
-> author_per_article <- authorlist.aea.df %>%
-+   select(given,family,doi) %>%
-+   group_by(doi) %>%
-+   summarize(num_authors=n()) %>%
-+   ungroup()
-select: dropped 8 variables (sequence, affiliation.name, role.vocabulary, role.role, suffix, …)
-group_by: one grouping variable (doi)
-summarize: now 2,066 rows and 2 columns, ungrouped
-ungroup: no grouping variables remain
->   
-> 
-> avg_author_per_article <- author_per_article%>%
-+   summarize(num_authors=sum(num_authors)/n())
-summarize: now one row and one column, ungrouped
-> 
-> 
-> articles_not_published <- jira.plus.authors %>% 
-+   filter(is.na(container.title)) %>% 
-+   # remove the JEP and P&P
-+   filter(doi_article_prefix %in% c("","pandp","jep")) %>%
-+   nrow()
-filter: removed 2,081 rows (64%), 1,183 rows remaining
-filter: removed 352 rows (30%), 831 rows remaining
-> 
-> articles_not_published * avg_unique_authors_per_article
-[1] 1693.946
+> stats.main
+$articles_published
+[1] 2066
+
+$unique_authors
+[1] 4242
+
+$avg_author_per_article
+[1] 2.682478
+
+$articles_jep
+[1] 150
+
+$articles_not_published
+[1] 358
+
+$estimate_authors
+[1] 5605
+
+> stats.pandp
+$articles_published
+[1] 664
+
+$unique_authors
+[1] 1790
+
+$avg_author_per_article
+[1] 3.146084
+
+$articles_jep
+[1] 0
+
+$articles_not_published
+[1] 6
+
+$estimate_authors
+[1] 1809
+
 > 
 > proc.time()
    user  system elapsed 
-  3.844   0.690   3.848 
+  4.957   0.748   4.837 

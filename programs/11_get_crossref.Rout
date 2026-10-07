@@ -91,7 +91,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has no
 > 
 > # Each journal has a ISSN
 > if (!file.exists(issns.file)) {
-+   issns <- data.frame(matrix(ncol=3,nrow=11))
++   issns <- data.frame(matrix(ncol=3,nrow=13))
 +   names(issns) <- c("journal","issn","lastdate")
 +   tmp.date <- c("2000-01")
 + # Print ISSNs are needed for AER, JEL, JEP: some works carry only the print ISSN.
@@ -107,6 +107,8 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has no
 + issns[9,] <- c("Journal of Economic Perspectives","1944-7965",tmp.date)
 + issns[10,] <- c("Journal of Economic Perspectives","0895-3309",tmp.date)  # print ISSN is needed!
 + issns[11,] <- c("American Economic Review: Insights","2640-2068",tmp.date)
++ issns[12,] <- c("AEA Papers and Proceedings","2574-0776",tmp.date)
++ issns[13,] <- c("AEA Papers and Proceedings","2574-0768",tmp.date)  # print ISSN
 + 
 +   saveRDS(issns %>% filter(!is.na(journal)), file= issns.file)
 + } else {
@@ -169,12 +171,14 @@ Processing Journal of Economic Literature (0022-0515)
 Processing Journal of Economic Perspectives (1944-7965)
 Processing Journal of Economic Perspectives (0895-3309)
 Processing American Economic Review: Insights (2640-2068)
+Processing AEA Papers and Proceedings (2574-0776)
+Processing AEA Papers and Proceedings (2574-0768)
 > 
 > 
 > # filters
 > new.df <- readRDS(file.path(interwrk,"new.Rds"))
 > nrow(new.df)
-[1] 13584
+[1] 16230
 > new.df %>%
 +   # a work can be returned under both its print and online ISSN
 +   distinct(doi,.keep_all=TRUE) %>%
@@ -185,20 +189,20 @@ Processing American Economic Review: Insights (2640-2068)
 +   # filter(title!="Editor's Note") %>%
 +   # More robust
 +   filter(str_sub(doi, start= -1)!="i")-> filtered.df
-distinct: removed 908 rows (7%), 12,676 rows remaining
+distinct: removed 2,231 rows (14%), 13,999 rows remaining
 filter: no rows removed
-filter: removed 525 rows (4%), 12,151 rows remaining
-filter: removed 131 rows (1%), 12,020 rows remaining
-filter: removed 3 rows (<1%), 12,017 rows remaining
-filter: removed 122 rows (1%), 11,895 rows remaining
+filter: removed 534 rows (4%), 13,465 rows remaining
+filter: removed 131 rows (1%), 13,334 rows remaining
+filter: removed 3 rows (<1%), 13,331 rows remaining
+filter: removed 140 rows (1%), 13,191 rows remaining
 > nrow(filtered.df)
-[1] 11895
+[1] 13191
 > saveRDS(filtered.df, file=  doi.file.Rds)
 > 
 > # clean read-back
 > aeadois <- readRDS(file= doi.file.Rds)
 > nrow(aeadois)
-[1] 11895
+[1] 13191
 > 
 > # subset to the years in-scope: 2019+
 > aeadois %>%
@@ -206,7 +210,7 @@ filter: removed 122 rows (1%), 11,895 rows remaining
 +   filter(year >= 2019 ) %>%
 +   filter(published.print >= '2019-01-01') -> aeadois.subset 
 mutate: new variable 'year' (character) with 27 unique values and 0% NA
-filter: removed 8,251 rows (69%), 3,644 rows remaining
+filter: removed 8,387 rows (64%), 4,804 rows remaining
 filter: no rows removed
 > aeadois.subset %>%
 +   group_by(year) %>%
@@ -218,14 +222,14 @@ summarise: now 8 rows and 2 columns, ungrouped
 # A tibble: 8 × 2
   year  Published
   <chr>     <int>
-1 2019        441
-2 2020        408
-3 2021        445
-4 2022        511
-5 2023        481
-6 2024        496
-7 2025        466
-8 2026        396
+1 2019        568
+2 2020        550
+3 2021        593
+4 2022        657
+5 2023        635
+6 2024        644
+7 2025        612
+8 2026        545
 > 
 > aeadois.by.year %>% ungroup() %>% summarize(n=sum(Published)) -> aeadois.total
 ungroup: no grouping variables remain
@@ -235,10 +239,10 @@ summarize: now one row and one column, ungrouped
 # A tibble: 1 × 1
       n
   <int>
-1  3644
+1  4804
 > 
 > 
 > 
 > proc.time()
    user  system elapsed 
- 38.117   1.101 158.433 
+ 46.137   1.263 219.647 

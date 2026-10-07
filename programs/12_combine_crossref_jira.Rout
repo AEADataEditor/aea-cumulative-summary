@@ -91,7 +91,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has no
 > # clean read-back
 > aeadois <- readRDS(file= doi.file.Rds)
 > nrow(aeadois)
-[1] 11895
+[1] 13191
 > 
 > # subset to the years in-scope: 2019+
 > aeadois %>%
@@ -100,7 +100,7 @@ Skipping install of 'openalexR' from a github remote, the SHA1 (5ae07179) has no
 +   filter(published.print >= firstpubday)  %>% 
 +   mutate(match=TRUE)-> aeadois.subset 
 mutate: new variable 'year' (character) with 27 unique values and 0% NA
-filter: removed 7,854 rows (66%), 4,041 rows remaining
+filter: removed 7,854 rows (60%), 5,337 rows remaining
 filter: no rows removed
 mutate: new variable 'match' (logical) with one unique value and 0% NA
 > 
@@ -118,9 +118,9 @@ mutate: new variable 'match' (logical) with one unique value and 0% NA
 +                                aeadois.subset,by=c("doi"="doi")) %>%
 +                      mutate(published = if_else(is.na(match),FALSE,TRUE))
 left_join: added 9 columns (container.title, published.print, issue, title, volume, …)
-           > rows only in jira.manuscript.dois  1,183
-           > rows only in aeadois.subset       (1,975)
-           > matched rows                       2,081
+           > rows only in jira.manuscript.dois    515
+           > rows only in aeadois.subset       (2,607)
+           > matched rows                       2,749
            >                                   =======
            > rows total                         3,264
 mutate: new variable 'published' (logical) with 2 unique values and 0% NA
@@ -147,7 +147,8 @@ select: dropped one variable (doi_article_prefix)
 +                                                   "American Economic Review"="AER",
 +                                                   "Journal of Economic Literature"="JEL",
 +                                                   "Journal of Economic Perspectives"="JEP",
-+                                                   "American Economic Review: Insights"="AER:Insights"))) %>%
++                                                   "American Economic Review: Insights"="AER:Insights",
++                                                   "AEA Papers and Proceedings"="AEA P&P"))) %>%
 +                   # one last fix
 +                   mutate(Journal = if_else(Journal=="AER: Insights","AER:Insights",Journal),
 +                          Journal = if_else(Journal=="AEJ:Macroeconomics","AEJ:Macro",Journal),
@@ -159,21 +160,21 @@ select: dropped one variable (doi_article_prefix)
 +                                     str_sub(doi, start=-8, end=-5),"-",
 +                                     str_sub(doi, start=-4)))
 right_join: added 9 columns (container.title, published.print, issue, title, volume, …)
-            > rows only in jira.manuscript.dois (1,183)
-            > rows only in aeadois.subset        1,975
-            > matched rows                       2,081    (includes duplicates)
+            > rows only in jira.manuscript.dois (  515)
+            > rows only in aeadois.subset        2,607
+            > matched rows                       2,749    (includes duplicates)
             >                                   =======
-            > rows total                         4,056
-filter: removed 2,081 rows (51%), 1,975 rows remaining
-mutate: changed 1,975 values (100%) of 'Journal' (1,975 fewer NAs)
-mutate: changed 464 values (23%) of 'Journal' (0 new NAs)
+            > rows total                         5,356
+filter: removed 2,749 rows (51%), 2,607 rows remaining
+mutate: changed 2,607 values (100%) of 'Journal' (2,607 fewer NAs)
+mutate: changed 464 values (18%) of 'Journal' (0 new NAs)
 left_join: added one column (mc_prefix)
            > rows only in x                   0
-           > rows only in journal.abbrev (    1)
-           > matched rows                 1,975
+           > rows only in journal.abbrev (    0)
+           > matched rows                 2,607
            >                             =======
-           > rows total                   1,975
-mutate: changed 1,975 values (100%) of 'mc_number' (1,975 fewer NAs)
+           > rows total                   2,607
+mutate: changed 2,607 values (100%) of 'mc_number' (2,607 fewer NAs)
 > 
 > 
 > # Who are these?
@@ -185,18 +186,18 @@ mutate: changed 1,975 values (100%) of 'mc_number' (1,975 fewer NAs)
 group_by: 2 grouping variables (Journal, published)
 summarize: now 18 rows and 3 columns, ungrouped
 # A tibble: 10 × 3
-   Journal                 published_FALSE published_TRUE
-   <chr>                             <int>          <int>
- 1 ""                                    1              1
- 2 "AEA P&P"                           673              0
- 3 "AEJ:Applied Economics"              67            316
- 4 "AEJ:Economic Policy"                84            384
- 5 "AEJ:Macro"                          63            300
- 6 "AEJ:Micro"                          26            170
- 7 "AER"                                82            660
- 8 "AER:Insights"                       25            174
- 9 "JEL"                                12             76
-10 "JEP"                               150              0
+   Journal                 published_TRUE published_FALSE
+   <chr>                            <int>           <int>
+ 1 ""                                   2               0
+ 2 "AEA P&P"                          667               6
+ 3 "AEJ:Applied Economics"            316              67
+ 4 "AEJ:Economic Policy"              384              84
+ 5 "AEJ:Macro"                        300              63
+ 6 "AEJ:Micro"                        170              26
+ 7 "AER"                              660              82
+ 8 "AER:Insights"                     174              25
+ 9 "JEL"                               76              12
+10 "JEP"                                0             150
 > 
 > ## Save files
 > 
@@ -211,4 +212,4 @@ summarize: now 18 rows and 3 columns, ungrouped
 > 
 > proc.time()
    user  system elapsed 
-  4.292   0.810   4.409 
+  7.230   0.889   7.355 
