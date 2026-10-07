@@ -15,9 +15,11 @@ library(rcrossref)
 
 # Each journal has a ISSN
 if (!file.exists(issns.file)) {
-  issns <- data.frame(matrix(ncol=3,nrow=9))
+  issns <- data.frame(matrix(ncol=3,nrow=11))
   names(issns) <- c("journal","issn","lastdate")
   tmp.date <- c("2000-01")
+# Print ISSNs are needed for AER, JEL, JEP: some works carry only the print ISSN.
+# Duplicates are removed by DOI below.
 issns[1,] <- c("American Economic Journal: Applied Economics","1945-7790",tmp.date)
 issns[2,] <- c("American Economic Journal: Economic Policy","1945-774X",tmp.date)
 issns[3,] <- c("American Economic Journal: Macroeconomics", "1945-7715",tmp.date)
@@ -25,8 +27,10 @@ issns[4,] <- c("American Economic Journal: Microeconomics", "1945-7685",tmp.date
 issns[5,] <- c("The American Economic Review","1944-7981",tmp.date)
 issns[6,] <- c("The American Economic Review","0002-8282",tmp.date)  # print ISSN is needed!
 issns[7,] <- c("Journal of Economic Literature","2328-8175",tmp.date)
-issns[8,] <- c("Journal of Economic Perspectives","1944-7965",tmp.date)
-issns[9,] <- c("American Economic Review: Insights","2640-2068",tmp.date)
+issns[8,] <- c("Journal of Economic Literature","0022-0515",tmp.date)  # print ISSN is needed!
+issns[9,] <- c("Journal of Economic Perspectives","1944-7965",tmp.date)
+issns[10,] <- c("Journal of Economic Perspectives","0895-3309",tmp.date)  # print ISSN is needed!
+issns[11,] <- c("American Economic Review: Insights","2640-2068",tmp.date)
 
   saveRDS(issns %>% filter(!is.na(journal)), file= issns.file)
 } else {
@@ -53,7 +57,9 @@ if (file.exists(doi.file.Rds) ) {
                        filter=c(from_pub_date=issns[x,"lastdate"]),
                        select=c("DOI","title","published-print","volume","issue","container-title","author"),
                        .progress="text",
-                       cursor = "*")
+                       cursor = "*",
+                       # default cursor_max is 5000, which truncates AER
+                       cursor_max = 100000)
     if ( x == 1 ) {
       new.df <- as.data.frame(new$data)
       new.df$issn = issns[x,"issn"]
@@ -78,6 +84,8 @@ if (file.exists(doi.file.Rds) ) {
 new.df <- readRDS(file.path(interwrk,"new.Rds"))
 nrow(new.df)
 new.df %>%
+  # a work can be returned under both its print and online ISSN
+  distinct(doi,.keep_all=TRUE) %>%
   filter(!is.null(author)) %>%
   filter(title!="Front Matter") %>%
   filter(!str_detect(title,"Volume")) %>%
